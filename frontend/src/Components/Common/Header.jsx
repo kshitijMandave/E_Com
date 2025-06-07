@@ -1,11 +1,14 @@
 import React from "react";
+import Topbar from "../Layout/Topbar";
+import Navbar from "./Navbar";
 
 function Header() {
   return (
     <div>
-      <h1>Header</h1>
       {/*Topbar */}
+      <Topbar />
       {/*Navbar */}
+      <Navbar />
       {/*Cart Drawer */}
     </div>
   );
