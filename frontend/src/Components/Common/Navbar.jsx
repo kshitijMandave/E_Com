@@ -9,7 +9,7 @@ import CartDrawer from "../Layout/CartDrawer";
 function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const toggleCart = () => {
+  const togglecartDrawer = () => {
     setIsCartOpen((prev) => !prev);
   };
 
@@ -43,7 +43,10 @@ function Navbar() {
           </Link>
 
           {/* Cart Button */}
-          <button onClick={toggleCart} className="relative hover:text-black">
+          <button
+            onClick={togglecartDrawer}
+            className="relative hover:text-black"
+          >
             <HiOutlineShoppingBag className="h-6 w-6 text-gray-700" />
             <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs rounded-full px-2 py-0.5">
               4
@@ -60,7 +63,7 @@ function Navbar() {
       </nav>
 
       {/* Cart Drawer */}
-      <CartDrawer isOpen={isCartOpen} onClose={toggleCart} />
+      <CartDrawer isOpen={isCartOpen} onClose={togglecartDrawer} />
     </>
   );
 }
