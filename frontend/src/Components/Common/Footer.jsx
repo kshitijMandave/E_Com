@@ -121,7 +121,7 @@ function Footer() {
           </div>
           <p className="text-gray-500">Call Us</p>
           <p>
-            <FiPhoneCall className="inline-block mr-2" />
+            <FiPhoneCall className="inline-block mr-2" /> 88888 88888
           </p>
         </div>
       </div>
