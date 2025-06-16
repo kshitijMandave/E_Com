@@ -1,12 +1,14 @@
 import React from "react";
 import Hero from "../Components/Layout/Hero";
 import GenderCollectionSection from "../Components/Products/GenderCollectionSection";
+import NewArrival from "../Components/Products/NewArrival";
 
 function Home() {
   return (
     <div>
       <Hero />
       <GenderCollectionSection />
+      <NewArrival />
     </div>
   );
 }
