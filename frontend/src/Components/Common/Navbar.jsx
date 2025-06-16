@@ -47,7 +47,7 @@ function Navbar() {
             onClick={togglecartDrawer}
             className="relative hover:text-black"
           >
-            <HiOutlineShoppingBag className="h-6 w-6 text-gray-700" />
+            <HiOutlineShoppingBag className="h-6 w-6 text-gray-700 cursor-pointer" />
             <span className="absolute -top-1 -right-2 bg-red-600 text-white text-xs rounded-full px-2 py-0.5">
               4
             </span>

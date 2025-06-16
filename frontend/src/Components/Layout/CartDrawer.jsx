@@ -1,4 +1,5 @@
 import { IoMdClose } from "react-icons/io";
+import CartContents from "../Cart/CartContents";
 
 function CartDrawer({ isOpen, onClose }) {
   return (
@@ -21,9 +22,8 @@ function CartDrawer({ isOpen, onClose }) {
 
         {/* Cart Content with scrollable area */}
         <div className="flex-grow p-4 overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-4">Your Cart</h2>
-          <p className="text-sm text-gray-500">Cart items will appear here.</p>
-          {/* Cart items go here */}
+          <h2 className="text-xm font-semibold mb-4">Your Cart</h2>
+          <CartContents />
         </div>
 
         {/* Checkout button fixed at the bottom */}
