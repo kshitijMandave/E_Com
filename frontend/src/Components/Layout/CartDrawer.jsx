@@ -9,7 +9,7 @@ function CartDrawer({ isOpen, onClose }) {
 
       {/* Cart Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-3/4 sm:w-1/2 md:w-1/4 bg-white shadow-lg transform transition-transform duration-300 z-50 flex flex-col ${
+        className={`fixed top-0 right-0 h-full w-3/4 sm:w-1/2 md:w-[25rem] bg-white shadow-lg transform transition-transform duration-300 z-50 flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

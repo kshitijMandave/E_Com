@@ -1,5 +1,4 @@
-import React from "react";
-
+import { RiDeleteBin3Line } from "react-icons/ri";
 function CartContents() {
   const cartProducts = [
     {
@@ -9,7 +8,8 @@ function CartContents() {
       colur: "Red",
       quantity: "1",
       price: "200",
-      image: "",
+      image:
+        "https://th.bing.com/th/id/OIP.GQ12ja0h5CjFwcKZHdxFDwHaHa?r=0&rs=1&pid=ImgDetMain&cb=idpwebp1&o=7&rm=3",
     },
     {
       productId: "2",
@@ -18,7 +18,8 @@ function CartContents() {
       colur: "Blur",
       quantity: "1",
       price: "1000",
-      image: "",
+      image:
+        "https://th.bing.com/th/id/OIP.VZHs3XIvxlYplyAOUfmkqgHaLH?r=0&rs=1&pid=ImgDetMain&cb=idpwebp1&o=7&rm=3",
     },
   ];
   return (
@@ -49,6 +50,12 @@ function CartContents() {
                 </button>
               </div>
             </div>
+          </div>
+          <div>
+            <p>$ {product.price.toLocaleString()}</p>
+            <button>
+              <RiDeleteBin3Line className="h-6 w-6 mt-2 text-red-600 " />
+            </button>
           </div>
         </div>
       ))}
