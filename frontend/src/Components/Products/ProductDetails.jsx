@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+import ProductGrid from "./ProductGrid";
 
 const selectedProduct = {
   name: "Stylish Jacket",
@@ -20,13 +22,51 @@ const selectedProduct = {
     },
   ],
 };
+const similerProducts = [
+  {
+    id: 1,
+    name: "Product 1",
+    price: 100,
+    images: [{ url: "https://picsum.photos/500/500?random=2" }],
+  },
+  {
+    id: 2,
+    name: "Product 2",
+    price: 150,
+    images: [{ url: "https://picsum.photos/500/500?random=3" }],
+  },
+  {
+    id: 3,
+    name: "Product 3",
+    price: 120,
+    images: [{ url: "https://picsum.photos/500/500?random=4" }],
+  },
+  {
+    id: 4,
+    name: "Product 4",
+    price: 200,
+    images: [{ url: "https://picsum.photos/500/500?random=5" }],
+  },
+  {
+    id: 5,
+    name: "Product 5",
+    price: 90,
+    images: [{ url: "https://picsum.photos/500/500?random=6" }],
+  },
+  {
+    id: 6,
+    name: "Product 6",
+    price: 175,
+    images: [{ url: "https://picsum.photos/500/500?random=7" }],
+  },
+];
 
 function ProductDetails() {
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
@@ -34,15 +74,26 @@ function ProductDetails() {
     }
   }, []);
 
-  useEffect(() => {
-    setIsButtonDisabled(!selectedSize || !selectedColor);
-  }, [selectedSize, selectedColor]);
+  const handleAddToCart = () => {
+    if (!selectedSize || !selectedColor) {
+      toast.error("Please select size and color before adding to cart");
+      return;
+    }
+
+    setIsAdding(true);
+
+    setTimeout(() => {
+      setIsAdding(false);
+      toast.success("Product added to cart!");
+      // Add to cart logic here (e.g., Redux/localStorage)
+    }, 3000);
+  };
 
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
         <div className="flex flex-col md:flex-row">
-          {/* Left Thumbnails for Desktop */}
+          {/* Thumbnails - Left */}
           <div className="hidden md:flex flex-col space-y-4 mr-6">
             {selectedProduct.images.map((image, index) => (
               <img
@@ -83,7 +134,7 @@ function ProductDetails() {
             </div>
           </div>
 
-          {/* Right Side */}
+          {/* Product Info */}
           <div className="md:w-1/2 md:ml-10 mt-4 md:mt-0">
             <h1 className="text-2xl md:text-3xl font-semibold mb-2">
               {selectedProduct.name}
@@ -103,6 +154,7 @@ function ProductDetails() {
               <strong>Material:</strong> {selectedProduct.material}
             </p>
 
+            {/* Colors */}
             <div className="mb-4">
               <strong>Colors:</strong>
               <div className="flex items-center mt-2">
@@ -142,6 +194,7 @@ function ProductDetails() {
               </div>
             </div>
 
+            {/* Quantity */}
             <div className="mb-6">
               <p className="text-gray-700">Quantity:</p>
               <div className="flex items-center space-x-4 mt-2">
@@ -161,15 +214,19 @@ function ProductDetails() {
               </div>
             </div>
 
+            {/* Add to Cart */}
             <button
-              disabled={isButtonDisabled}
+              onClick={handleAddToCart}
               className={`py-2 px-6 rounded w-full mb-4 ${
-                isButtonDisabled ? "bg-gray-400" : "bg-black text-white"
+                !selectedSize || !selectedColor
+                  ? "bg-gray-400 text-white"
+                  : "bg-black text-white"
               }`}
             >
-              ADD TO CART
+              {isAdding ? "Adding..." : "ADD TO CART"}
             </button>
 
+            {/* Table */}
             <div className="mt-10 text-gray-700">
               <h3 className="text-xl font-bold mb-4">Characteristics:</h3>
               <table className="w-full text-left text-sm text-gray-600">
@@ -186,6 +243,13 @@ function ProductDetails() {
               </table>
             </div>
           </div>
+        </div>
+        <div className="mt-20">
+          {/* Best Seller */}
+          <h2 className="text-3xl text-center font-bold mb-4">
+            You May Also Like
+          </h2>
+          <ProductGrid product={similerProducts} />
         </div>
       </div>
     </div>
