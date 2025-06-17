@@ -1900,7 +1900,7 @@ function NewArrival() {
             <div className="absolute bottom-0 left-0 right-0 bg-white/70 backdrop-blur-md text-black p-4 rounded-b-lg">
               <Link to={`/product/${product.id}`} className="block">
                 <h4 className="font-medium">{product.title}</h4>
-                <p className="mt-1">${product.price}</p>
+                <p className="mt-1">₹{product.price}</p>
               </Link>
             </div>
           </div>

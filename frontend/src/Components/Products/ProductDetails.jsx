@@ -47,18 +47,6 @@ const similerProducts = [
     price: 200,
     images: [{ url: "https://picsum.photos/500/500?random=5" }],
   },
-  {
-    id: 5,
-    name: "Product 5",
-    price: 90,
-    images: [{ url: "https://picsum.photos/500/500?random=6" }],
-  },
-  {
-    id: 6,
-    name: "Product 6",
-    price: 175,
-    images: [{ url: "https://picsum.photos/500/500?random=7" }],
-  },
 ];
 
 function ProductDetails() {
@@ -249,7 +237,7 @@ function ProductDetails() {
           <h2 className="text-3xl text-center font-bold mb-4">
             You May Also Like
           </h2>
-          <ProductGrid product={similerProducts} />
+          <ProductGrid products={similerProducts} />
         </div>
       </div>
     </div>
