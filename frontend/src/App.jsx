@@ -3,6 +3,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import UsreLayout from "./Components/Layout/UsreLayout";
 import Home from "./Pages/Home";
 import { Toaster } from "sonner";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 
 function App() {
   return (
@@ -10,7 +12,9 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<UsreLayout />}>
-          <Route index element={<Home />}></Route>
+          <Route index element={<Home />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
         <Route>{/*Admin Layout */}</Route>
       </Routes>
