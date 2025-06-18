@@ -1,5 +1,6 @@
 import Hero from "../Components/Layout/Hero";
 import FeaturedCollection from "../Components/Products/FeaturedCollection";
+import FeatureSection from "../Components/Products/FeatureSection";
 import GenderCollectionSection from "../Components/Products/GenderCollectionSection";
 import NewArrival from "../Components/Products/NewArrival";
 import ProductDetails from "../Components/Products/ProductDetails";
@@ -75,6 +76,7 @@ function Home() {
       </div>
 
       <FeaturedCollection />
+      <FeatureSection />
     </div>
   );
 }
