@@ -1,4 +1,5 @@
 import Hero from "../Components/Layout/Hero";
+import FeaturedCollection from "../Components/Products/FeaturedCollection";
 import GenderCollectionSection from "../Components/Products/GenderCollectionSection";
 import NewArrival from "../Components/Products/NewArrival";
 import ProductDetails from "../Components/Products/ProductDetails";
@@ -72,6 +73,8 @@ function Home() {
         </h2>
         <ProductGrid products={placeholderProducts} />
       </div>
+
+      <FeaturedCollection />
     </div>
   );
 }
