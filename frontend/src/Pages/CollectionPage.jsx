@@ -1,15 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import { FaFilter } from "react-icons/fa";
 import FilterSideBar from "../Components/Products/FilterSideBar";
+import SortOptions from "../Components/Products/SortOptions";
+import ProductGrid from "../Components/Products/ProductGrid";
 
 function CollectionPage() {
-  const [products, setProducts] = useEffect();
-  const sidebarref = useRef(null);
+  const [products, setProducts] = useState([]);
+  const sidebarRef = useRef(null);
   const [isSideBarOpen, setSideBarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSideBarOpen(!isSideBarOpen);
   };
+
+  const handleClickOutside = (e) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+      setSideBarOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
       const fetchedProducts = [
@@ -65,15 +81,32 @@ function CollectionPage() {
       setProducts(fetchedProducts);
     }, 1000);
   }, []);
+
   return (
     <div className="flex flex-col lg:flex-row">
       {/* Mobile Filter Button */}
-      <button className="lg:hidden border p-2 flex justify-center items-center">
-        <FaFilter className="mr-2" />
+      <button
+        onClick={toggleSidebar}
+        className="lg:hidden border p-2 flex justify-center items-center mt-4 ml-4 bg-white shadow-md z-50"
+      >
+        <FaFilter className="mr-2" /> Filters
       </button>
+
       {/* Filter Sidebar */}
-      <div ref={sidebarref}>
+      <div
+        ref={sidebarRef}
+        className={`${
+          isSideBarOpen ? "translate-x-0" : "-translate-x-full"
+        } fixed inset-y-0 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
+      >
         <FilterSideBar />
+      </div>
+      <div className="flex-grow p-4">
+        <h2 className="text-2xl uppercase mb-4">All Collection</h2>
+        {/*Sort Options */}
+        <SortOptions />
+
+        <ProductGrid products={products} />
       </div>
     </div>
   );
