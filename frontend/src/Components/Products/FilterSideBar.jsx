@@ -14,11 +14,8 @@ function FilterSideBar() {
     maxPrice: 100,
   });
 
-  const [priceRange, setPriceRange] = useState([0, 100]);
-
   const categories = ["top wear", "bottom wear"];
   const genders = ["men", "women"];
-
   const colors = [
     "black",
     "white",
@@ -31,9 +28,7 @@ function FilterSideBar() {
     "gray",
     "purple",
   ];
-
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-
   const materials = [
     "cotton",
     "polyester",
@@ -44,7 +39,6 @@ function FilterSideBar() {
     "silk",
     "nylon",
   ];
-
   const brands = [
     "Nike",
     "Adidas",
@@ -60,7 +54,6 @@ function FilterSideBar() {
 
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
-
     setFilters({
       category: params.category || "",
       gender: params.gender || "",
@@ -73,18 +66,51 @@ function FilterSideBar() {
     });
   }, [searchParams]);
 
+  const updateQuery = (key, values) => {
+    if (Array.isArray(values)) {
+      if (values.length > 0) {
+        searchParams.set(key, values.join(","));
+      } else {
+        searchParams.delete(key);
+      }
+    } else {
+      if (values) {
+        searchParams.set(key, values);
+      } else {
+        searchParams.delete(key);
+      }
+    }
+    setSearchParams(searchParams);
+  };
+
   const handleCategoryChange = (e) => {
     const value = e.target.value;
     setFilters((prev) => ({ ...prev, category: value }));
-    searchParams.set("category", value);
-    setSearchParams(searchParams);
+    updateQuery("category", value);
   };
 
   const handleGenderChange = (e) => {
     const value = e.target.value;
     setFilters((prev) => ({ ...prev, gender: value }));
-    searchParams.set("gender", value);
-    setSearchParams(searchParams);
+    updateQuery("gender", value);
+  };
+
+  const handleCheckboxChange = (e, key) => {
+    const value = e.target.value;
+    const isChecked = e.target.checked;
+
+    const updated = isChecked
+      ? [...filters[key], value]
+      : filters[key].filter((item) => item !== value);
+
+    setFilters((prev) => ({ ...prev, [key]: updated }));
+    updateQuery(key, updated);
+  };
+
+  const handleColorSelect = (color) => {
+    const selected = filters.color === color ? "" : color;
+    setFilters((prev) => ({ ...prev, color: selected }));
+    updateQuery("color", selected);
   };
 
   return (
@@ -102,9 +128,9 @@ function FilterSideBar() {
               value={category}
               checked={filters.category === category}
               onChange={handleCategoryChange}
-              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
+              className="mr-2"
             />
-            <label className="text-gray-700 capitalize">{category}</label>
+            <label className="capitalize">{category}</label>
           </div>
         ))}
       </div>
@@ -120,26 +146,81 @@ function FilterSideBar() {
               value={g}
               checked={filters.gender === g}
               onChange={handleGenderChange}
-              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
+              className="mr-2"
             />
-            <label className="text-gray-700 capitalize">{g}</label>
+            <label className="capitalize">{g}</label>
           </div>
         ))}
       </div>
 
-      {/*Color Filter */}
+      {/* Color Filter */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Color</label>
         <div className="flex flex-wrap gap-2">
           {colors.map((color) => (
             <button
               key={color}
-              name="color"
-              className="w-8 h-8 rounded-full border border-gray-300 cursor-pointer transition hover:scale-105"
-              style={{ backgroundColor: color.toLowerCase() }}
-            ></button>
+              onClick={() => handleColorSelect(color)}
+              className={`w-8 h-8 rounded-full border-2 transition hover:scale-110 ${
+                filters.color === color
+                  ? "ring-2 ring-black"
+                  : "border-gray-300"
+              }`}
+              style={{ backgroundColor: color }}
+            />
           ))}
         </div>
+      </div>
+
+      {/* Size Filter */}
+      <div className="mb-6">
+        <label className="block text-gray-600 font-medium mb-2">Size</label>
+        {sizes.map((size) => (
+          <div key={size} className="flex items-center mb-1">
+            <input
+              type="checkbox"
+              value={size}
+              checked={filters.size.includes(size)}
+              onChange={(e) => handleCheckboxChange(e, "size")}
+              className="mr-2"
+            />
+            <label>{size}</label>
+          </div>
+        ))}
+      </div>
+
+      {/* Material Filter */}
+      <div className="mb-6">
+        <label className="block text-gray-600 font-medium mb-2">Material</label>
+        {materials.map((mat) => (
+          <div key={mat} className="flex items-center mb-1">
+            <input
+              type="checkbox"
+              value={mat}
+              checked={filters.material.includes(mat)}
+              onChange={(e) => handleCheckboxChange(e, "material")}
+              className="mr-2"
+            />
+            <label className="capitalize">{mat}</label>
+          </div>
+        ))}
+      </div>
+
+      {/* Brand Filter */}
+      <div className="mb-6">
+        <label className="block text-gray-600 font-medium mb-2">Brand</label>
+        {brands.map((brand) => (
+          <div key={brand} className="flex items-center mb-1">
+            <input
+              type="checkbox"
+              value={brand}
+              checked={filters.brand.includes(brand)}
+              onChange={(e) => handleCheckboxChange(e, "brand")}
+              className="mr-2"
+            />
+            <label className="capitalize">{brand}</label>
+          </div>
+        ))}
       </div>
     </div>
   );
