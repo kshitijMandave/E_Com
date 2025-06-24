@@ -14,6 +14,8 @@ function FilterSideBar() {
     maxPrice: 100,
   });
 
+  const [priceRange, setPriceRange] = useState([0, 100]);
+
   const categories = ["top wear", "bottom wear"];
   const genders = ["men", "women"];
   const colors = [
@@ -61,9 +63,14 @@ function FilterSideBar() {
       size: params.size ? params.size.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
-      minPrice: params.minPrice || 0,
-      maxPrice: params.maxPrice || 100,
+      minPrice: parseInt(params.minPrice) || 0,
+      maxPrice: parseInt(params.maxPrice) || 100,
     });
+
+    setPriceRange([
+      parseInt(params.minPrice) || 0,
+      parseInt(params.maxPrice) || 100,
+    ]);
   }, [searchParams]);
 
   const updateQuery = (key, values) => {
@@ -160,6 +167,7 @@ function FilterSideBar() {
           {colors.map((color) => (
             <button
               key={color}
+              type="button"
               onClick={() => handleColorSelect(color)}
               className={`w-8 h-8 rounded-full border-2 transition hover:scale-110 ${
                 filters.color === color
@@ -189,6 +197,23 @@ function FilterSideBar() {
         ))}
       </div>
 
+      {/* Brand Filter */}
+      <div className="mb-6">
+        <label className="block text-gray-600 font-medium mb-2">Brand</label>
+        {brands.map((brand) => (
+          <div key={brand} className="flex items-center mb-1">
+            <input
+              type="checkbox"
+              value={brand}
+              checked={filters.brand.includes(brand)}
+              onChange={(e) => handleCheckboxChange(e, "brand")}
+              className="mr-2"
+            />
+            <label className="capitalize">{brand}</label>
+          </div>
+        ))}
+      </div>
+
       {/* Material Filter */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Material</label>
@@ -206,21 +231,30 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Brand Filter */}
-      <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-2">Brand</label>
-        {brands.map((brand) => (
-          <div key={brand} className="flex items-center mb-1">
-            <input
-              type="checkbox"
-              value={brand}
-              checked={filters.brand.includes(brand)}
-              onChange={(e) => handleCheckboxChange(e, "brand")}
-              className="mr-2"
-            />
-            <label className="capitalize">{brand}</label>
-          </div>
-        ))}
+      {/* Price Range Filter */}
+      <div className="mb-8">
+        <label className="block font-medium text-gray-600 mb-2">
+          Price Range
+        </label>
+        <input
+          type="range"
+          name="pricerange"
+          min={0}
+          max={100}
+          value={priceRange[1]}
+          onChange={(e) => {
+            const newMax = Number(e.target.value);
+            setPriceRange([priceRange[0], newMax]);
+            setFilters((prev) => ({ ...prev, maxPrice: newMax }));
+            searchParams.set("maxPrice", newMax);
+            setSearchParams(searchParams);
+          }}
+          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+        />
+        <div className="flex justify-between text-sm mt-2">
+          <span>${priceRange[0]}</span>
+          <span>${priceRange[1]}</span>
+        </div>
       </div>
     </div>
   );
