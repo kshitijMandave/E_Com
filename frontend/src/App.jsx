@@ -12,8 +12,10 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
+      {/* here we are configuring which component should show at which path */}
       <Routes>
         <Route path="/" element={<UsreLayout />}>
+          {/* This is nested routing, if u want to implement nested routing, use close route tag and define nested path */}
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
