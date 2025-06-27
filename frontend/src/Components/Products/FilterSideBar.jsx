@@ -54,6 +54,7 @@ function FilterSideBar() {
     "HRX",
   ];
 
+  // Update state from URL on load
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
     setFilters({
@@ -73,45 +74,39 @@ function FilterSideBar() {
     ]);
   }, [searchParams]);
 
+  // Log changes to filters
+  useEffect(() => {
+    console.log("Current Filters:", filters);
+  }, [filters]);
+
   const updateQuery = (key, values) => {
     if (Array.isArray(values)) {
-      if (values.length > 0) {
-        searchParams.set(key, values.join(","));
-      } else {
-        searchParams.delete(key);
-      }
+      values.length > 0
+        ? searchParams.set(key, values.join(","))
+        : searchParams.delete(key);
     } else {
-      if (values) {
-        searchParams.set(key, values);
-      } else {
-        searchParams.delete(key);
-      }
+      values ? searchParams.set(key, values) : searchParams.delete(key);
     }
     setSearchParams(searchParams);
   };
 
-  const handleCategoryChange = (e) => {
-    const value = e.target.value;
-    setFilters((prev) => ({ ...prev, category: value }));
-    updateQuery("category", value);
-  };
+  const handleFilterChange = (e) => {
+    const { name, value, checked, type } = e.target;
+    console.log("Filter Changed:", { name, value, checked, type }); // ✅ Debug log
 
-  const handleGenderChange = (e) => {
-    const value = e.target.value;
-    setFilters((prev) => ({ ...prev, gender: value }));
-    updateQuery("gender", value);
-  };
+    if (type === "radio") {
+      setFilters((prev) => ({ ...prev, [name]: value }));
+      updateQuery(name, value);
+    }
 
-  const handleCheckboxChange = (e, key) => {
-    const value = e.target.value;
-    const isChecked = e.target.checked;
+    if (type === "checkbox") {
+      const updated = checked
+        ? [...filters[name], value]
+        : filters[name].filter((item) => item !== value);
 
-    const updated = isChecked
-      ? [...filters[key], value]
-      : filters[key].filter((item) => item !== value);
-
-    setFilters((prev) => ({ ...prev, [key]: updated }));
-    updateQuery(key, updated);
+      setFilters((prev) => ({ ...prev, [name]: updated }));
+      updateQuery(name, updated);
+    }
   };
 
   const handleColorSelect = (color) => {
@@ -124,7 +119,7 @@ function FilterSideBar() {
     <div className="p-4">
       <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
 
-      {/* Category Filter */}
+      {/* Category */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Category</label>
         {categories.map((category) => (
@@ -133,8 +128,8 @@ function FilterSideBar() {
               type="radio"
               name="category"
               value={category}
+              onChange={handleFilterChange}
               checked={filters.category === category}
-              onChange={handleCategoryChange}
               className="mr-2"
             />
             <label className="capitalize">{category}</label>
@@ -142,7 +137,7 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Gender Filter */}
+      {/* Gender */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Gender</label>
         {genders.map((g) => (
@@ -151,8 +146,8 @@ function FilterSideBar() {
               type="radio"
               name="gender"
               value={g}
+              onChange={handleFilterChange}
               checked={filters.gender === g}
-              onChange={handleGenderChange}
               className="mr-2"
             />
             <label className="capitalize">{g}</label>
@@ -160,7 +155,7 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Color Filter */}
+      {/* Color */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Color</label>
         <div className="flex flex-wrap gap-2">
@@ -180,16 +175,17 @@ function FilterSideBar() {
         </div>
       </div>
 
-      {/* Size Filter */}
+      {/* Size */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Size</label>
         {sizes.map((size) => (
           <div key={size} className="flex items-center mb-1">
             <input
               type="checkbox"
+              name="size"
               value={size}
+              onChange={handleFilterChange}
               checked={filters.size.includes(size)}
-              onChange={(e) => handleCheckboxChange(e, "size")}
               className="mr-2"
             />
             <label>{size}</label>
@@ -197,16 +193,17 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Brand Filter */}
+      {/* Brand */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Brand</label>
         {brands.map((brand) => (
           <div key={brand} className="flex items-center mb-1">
             <input
               type="checkbox"
+              name="brand"
               value={brand}
+              onChange={handleFilterChange}
               checked={filters.brand.includes(brand)}
-              onChange={(e) => handleCheckboxChange(e, "brand")}
               className="mr-2"
             />
             <label className="capitalize">{brand}</label>
@@ -214,16 +211,17 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Material Filter */}
+      {/* Material */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Material</label>
         {materials.map((mat) => (
           <div key={mat} className="flex items-center mb-1">
             <input
               type="checkbox"
+              name="material"
               value={mat}
+              onChange={handleFilterChange}
               checked={filters.material.includes(mat)}
-              onChange={(e) => handleCheckboxChange(e, "material")}
               className="mr-2"
             />
             <label className="capitalize">{mat}</label>
@@ -231,7 +229,7 @@ function FilterSideBar() {
         ))}
       </div>
 
-      {/* Price Range Filter */}
+      {/* Price Range */}
       <div className="mb-8">
         <label className="block font-medium text-gray-600 mb-2">
           Price Range
@@ -248,6 +246,7 @@ function FilterSideBar() {
             setFilters((prev) => ({ ...prev, maxPrice: newMax }));
             searchParams.set("maxPrice", newMax);
             setSearchParams(searchParams);
+            console.log("Price Changed:", newMax); // ✅ Debug log
           }}
           className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
         />
