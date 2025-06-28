@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function FilterSideBar() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     category: "",
     gender: "",
@@ -54,7 +55,6 @@ function FilterSideBar() {
     "HRX",
   ];
 
-  // Update state from URL on load
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
     setFilters({
@@ -64,55 +64,50 @@ function FilterSideBar() {
       size: params.size ? params.size.split(",") : [],
       material: params.material ? params.material.split(",") : [],
       brand: params.brand ? params.brand.split(",") : [],
-      minPrice: parseInt(params.minPrice) || 0,
-      maxPrice: parseInt(params.maxPrice) || 100,
+      minPrice: params.minPrice || 0,
+      maxPrice: params.maxPrice || 100,
     });
 
-    setPriceRange([
-      parseInt(params.minPrice) || 0,
-      parseInt(params.maxPrice) || 100,
-    ]);
+    setPriceRange([0, params.maxPrice || 100]);
   }, [searchParams]);
-
-  // Log changes to filters
-  useEffect(() => {
-    console.log("Current Filters:", filters);
-  }, [filters]);
-
-  const updateQuery = (key, values) => {
-    if (Array.isArray(values)) {
-      values.length > 0
-        ? searchParams.set(key, values.join(","))
-        : searchParams.delete(key);
-    } else {
-      values ? searchParams.set(key, values) : searchParams.delete(key);
-    }
-    setSearchParams(searchParams);
-  };
 
   const handleFilterChange = (e) => {
     const { name, value, checked, type } = e.target;
-    console.log("Filter Changed:", { name, value, checked, type }); // ✅ Debug log
-
-    if (type === "radio") {
-      setFilters((prev) => ({ ...prev, [name]: value }));
-      updateQuery(name, value);
-    }
+    let newFilters = { ...filters };
 
     if (type === "checkbox") {
-      const updated = checked
-        ? [...filters[name], value]
-        : filters[name].filter((item) => item !== value);
-
-      setFilters((prev) => ({ ...prev, [name]: updated }));
-      updateQuery(name, updated);
+      if (checked) {
+        newFilters[name] = [...(filters[name] || []), value];
+      } else {
+        newFilters[name] = newFilters[name].filter((item) => item !== value);
+      }
+    } else {
+      newFilters[name] = value;
     }
+    setFilters(newFilters);
+    updateURLParams(newFilters);
+    console.log(newFilters);
   };
 
-  const handleColorSelect = (color) => {
-    const selected = filters.color === color ? "" : color;
-    setFilters((prev) => ({ ...prev, color: selected }));
-    updateQuery("color", selected);
+  const updateURLParams = (newFilters) => {
+    const params = new URLSearchParams();
+    Object.keys(newFilters).forEach((key) => {
+      if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
+        params.append(key, newFilters[key].join(","));
+      } else if (newFilters[key]) {
+        params.append(key, newFilters[key]);
+      }
+    });
+    setSearchParams(params);
+    navigate(`?${params.toString()}`); //?category=bottom+wear&=XS
+  };
+
+  const handlePriceChange = (e) => {
+    const newPrice = e.target.value;
+    setPriceRange(0, newPrice);
+    const newFilters = { ...filters, minPrice: 0, maxPrice: newPrice };
+    setFilters(filters);
+    updateURLParams(newFilters);
   };
 
   return (
@@ -128,9 +123,9 @@ function FilterSideBar() {
               type="radio"
               name="category"
               value={category}
-              onChange={handleFilterChange}
               checked={filters.category === category}
-              className="mr-2"
+              onChange={handleFilterChange}
+              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <label className="capitalize">{category}</label>
           </div>
@@ -140,17 +135,17 @@ function FilterSideBar() {
       {/* Gender */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Gender</label>
-        {genders.map((g) => (
-          <div key={g} className="flex items-center mb-1">
+        {genders.map((gender) => (
+          <div key={gender} className="flex items-center mb-1">
             <input
               type="radio"
               name="gender"
-              value={g}
+              value={gender}
+              checked={filters.gender === gender}
               onChange={handleFilterChange}
-              checked={filters.gender === g}
-              className="mr-2"
+              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <label className="capitalize">{g}</label>
+            <span className="text-gray-700">{gender}</span>
           </div>
         ))}
       </div>
@@ -162,14 +157,13 @@ function FilterSideBar() {
           {colors.map((color) => (
             <button
               key={color}
-              type="button"
-              onClick={() => handleColorSelect(color)}
-              className={`w-8 h-8 rounded-full border-2 transition hover:scale-110 ${
-                filters.color === color
-                  ? "ring-2 ring-black"
-                  : "border-gray-300"
+              name="color"
+              value={color}
+              onChange={handleFilterChange}
+              className={`w-8 h-8 rounded-full border border-gray-300 cursor-pointer transition hover:scale-105 ${
+                filters.color === color ? "ring-2 ring-blue-500" : ""
               }`}
-              style={{ backgroundColor: color }}
+              style={{ backgroundColor: color.toLowerCase() }}
             />
           ))}
         </div>
@@ -186,9 +180,9 @@ function FilterSideBar() {
               value={size}
               onChange={handleFilterChange}
               checked={filters.size.includes(size)}
-              className="mr-2"
+              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <label>{size}</label>
+            <span className="text-gray-700">{size}</span>
           </div>
         ))}
       </div>
@@ -204,9 +198,9 @@ function FilterSideBar() {
               value={brand}
               onChange={handleFilterChange}
               checked={filters.brand.includes(brand)}
-              className="mr-2"
+              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <label className="capitalize">{brand}</label>
+            <span className="text-gray-700">{brand}</span>
           </div>
         ))}
       </div>
@@ -214,17 +208,17 @@ function FilterSideBar() {
       {/* Material */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Material</label>
-        {materials.map((mat) => (
-          <div key={mat} className="flex items-center mb-1">
+        {materials.map((material) => (
+          <div key={material} className="flex items-center mb-1">
             <input
               type="checkbox"
               name="material"
-              value={mat}
+              value={material}
               onChange={handleFilterChange}
-              checked={filters.material.includes(mat)}
-              className="mr-2"
+              checked={filters.material.includes(material)}
+              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
-            <label className="capitalize">{mat}</label>
+            <span className="text-gray-700">{material}</span>
           </div>
         ))}
       </div>
@@ -240,18 +234,11 @@ function FilterSideBar() {
           min={0}
           max={100}
           value={priceRange[1]}
-          onChange={(e) => {
-            const newMax = Number(e.target.value);
-            setPriceRange([priceRange[0], newMax]);
-            setFilters((prev) => ({ ...prev, maxPrice: newMax }));
-            searchParams.set("maxPrice", newMax);
-            setSearchParams(searchParams);
-            console.log("Price Changed:", newMax); // ✅ Debug log
-          }}
+          onChange={handlePriceChange}
           className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-sm mt-2">
-          <span>${priceRange[0]}</span>
+          <span>$0</span>
           <span>${priceRange[1]}</span>
         </div>
       </div>

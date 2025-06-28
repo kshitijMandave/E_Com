@@ -14,13 +14,16 @@ function CollectionPage() {
   };
 
   const handleClickOutside = (e) => {
+    //Close slide bar if clicked outside
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setSideBarOpen(false);
     }
   };
 
   useEffect(() => {
+    //Add event listener for clicks
     document.addEventListener("mousedown", handleClickOutside);
+    //Clean event listner
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
