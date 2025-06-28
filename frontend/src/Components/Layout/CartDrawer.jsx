@@ -1,7 +1,12 @@
 import { IoMdClose } from "react-icons/io";
 import CartContents from "../Cart/CartContents";
+import { useNavigate } from "react-router-dom";
 
 function CartDrawer({ isOpen, onClose }) {
+  const navigate = useNavigate();
+  const handleChekout = () => {
+    navigate("/chekout");
+  };
   return (
     <>
       {/* Overlay */}
@@ -28,7 +33,10 @@ function CartDrawer({ isOpen, onClose }) {
 
         {/* Checkout button fixed at the bottom */}
         <div className="p-4 sticky bottom-0 bg-white">
-          <button className="w-full bg-sky-600 hover:bg-sky-700 text-white py-2 px-4 rounded mb-2">
+          <button
+            onClick={handleChekout}
+            className="w-full bg-sky-600 hover:bg-sky-700 text-white py-2 px-4 rounded mb-2"
+          >
             Checkout
           </button>
           <p className="text-xs text-gray-500 text-center">
