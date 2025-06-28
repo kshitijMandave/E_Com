@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PayPalButton from "./PayPalButton";
 
 const cart = {
   products: [
@@ -34,6 +35,11 @@ function Chekout() {
   const handleCreateChekout = (e) => {
     e.preventDefault();
     setCheckoutId(123);
+  };
+
+  const handlePaymentSuccess = (deyails) => {
+    console.log("Payment Sucessful", deyails);
+    navigate("/order-confirmation");
   };
 
   return (
@@ -168,7 +174,11 @@ function Chekout() {
             ) : (
               <div>
                 <h3 className="text-lg mb-4">Pay with Paypal</h3>
-                {/*Paypal button Component */}
+                <PayPalButton
+                  amount={100}
+                  onSuccess={handlePaymentSuccess}
+                  onError={(err) => alert("Payment Faild. Try agian!!")}
+                />
               </div>
             )}
           </div>
