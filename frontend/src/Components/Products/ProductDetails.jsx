@@ -22,30 +22,31 @@ const selectedProduct = {
     },
   ],
 };
+
 const similerProducts = [
   {
     id: 1,
     name: "Product 1",
     price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=2" }],
+    images: [{ url: "https://picsum.photos/500/500?random=3" }],
   },
   {
     id: 2,
     name: "Product 2",
     price: 150,
-    images: [{ url: "https://picsum.photos/500/500?random=3" }],
+    images: [{ url: "https://picsum.photos/500/500?random=4" }],
   },
   {
     id: 3,
     name: "Product 3",
     price: 120,
-    images: [{ url: "https://picsum.photos/500/500?random=4" }],
+    images: [{ url: "https://picsum.photos/500/500?random=5" }],
   },
   {
     id: 4,
     name: "Product 4",
     price: 200,
-    images: [{ url: "https://picsum.photos/500/500?random=5" }],
+    images: [{ url: "https://picsum.photos/500/500?random=6" }],
   },
 ];
 
@@ -69,11 +70,9 @@ function ProductDetails() {
     }
 
     setIsAdding(true);
-
     setTimeout(() => {
       setIsAdding(false);
       toast.success("Product added to cart!");
-      // Add to cart logic here (e.g., Redux/localStorage)
     }, 3000);
   };
 
@@ -81,7 +80,6 @@ function ProductDetails() {
     <div className="p-6">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
         <div className="flex flex-col md:flex-row">
-          {/* Thumbnails - Left */}
           <div className="hidden md:flex flex-col space-y-4 mr-6">
             {selectedProduct.images.map((image, index) => (
               <img
@@ -96,18 +94,13 @@ function ProductDetails() {
             ))}
           </div>
 
-          {/* Main Image */}
           <div className="md:w-1/2">
-            <div className="mb-4">
-              <img
-                src={mainImage}
-                alt="Main product"
-                className="w-full h-auto object-cover rounded-lg"
-              />
-            </div>
-
-            {/* Mobile Thumbnails */}
-            <div className="md:hidden flex overflow-x-scroll space-x-4 mb-4">
+            <img
+              src={mainImage}
+              alt="Main product"
+              className="w-full h-auto object-cover rounded-lg"
+            />
+            <div className="md:hidden flex overflow-x-scroll space-x-4 my-4">
               {selectedProduct.images.map((image, index) => (
                 <img
                   key={index}
@@ -122,12 +115,11 @@ function ProductDetails() {
             </div>
           </div>
 
-          {/* Product Info */}
           <div className="md:w-1/2 md:ml-10 mt-4 md:mt-0">
-            <h1 className="text-2xl md:text-3xl font-semibold mb-2">
+            <h1 className="text-3xl font-semibold mb-2">
               {selectedProduct.name}
             </h1>
-            <p className="text-lg text-gray-600 mb-1 line-through">
+            <p className="text-lg text-gray-600 line-through">
               ₹{selectedProduct.originalPrice}
             </p>
             <p className="text-xl font-bold text-red-600 mb-2">
@@ -138,11 +130,10 @@ function ProductDetails() {
             <p className="mb-2">
               <strong>Brand:</strong> {selectedProduct.brand}
             </p>
-            <p className="mb-2">
+            <p className="mb-4">
               <strong>Material:</strong> {selectedProduct.material}
             </p>
 
-            {/* Colors */}
             <div className="mb-4">
               <strong>Colors:</strong>
               <div className="flex items-center mt-2">
@@ -164,7 +155,6 @@ function ProductDetails() {
               </div>
             </div>
 
-            {/* Size */}
             <div className="mb-4">
               <p className="text-gray-700">Size:</p>
               <div className="flex gap-2 mt-2">
@@ -182,7 +172,6 @@ function ProductDetails() {
               </div>
             </div>
 
-            {/* Quantity */}
             <div className="mb-6">
               <p className="text-gray-700">Quantity:</p>
               <div className="flex items-center space-x-4 mt-2">
@@ -202,7 +191,6 @@ function ProductDetails() {
               </div>
             </div>
 
-            {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
               className={`py-2 px-6 rounded w-full mb-4 ${
@@ -214,7 +202,6 @@ function ProductDetails() {
               {isAdding ? "Adding..." : "ADD TO CART"}
             </button>
 
-            {/* Table */}
             <div className="mt-10 text-gray-700">
               <h3 className="text-xl font-bold mb-4">Characteristics:</h3>
               <table className="w-full text-left text-sm text-gray-600">
@@ -232,8 +219,8 @@ function ProductDetails() {
             </div>
           </div>
         </div>
+
         <div className="mt-20">
-          {/* Best Seller */}
           <h2 className="text-3xl text-center font-bold mb-4">
             You May Also Like
           </h2>
