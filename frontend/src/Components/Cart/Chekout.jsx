@@ -7,13 +7,17 @@ const cart = {
     {
       id: 1,
       name: "Product 1",
+      color: "red",
+      size: "M",
       price: 100,
       images: [{ url: "https://picsum.photos/500/500?random=3" }],
     },
     {
       id: 2,
       name: "Product 2",
-      price: 150,
+      color: "black",
+      size: "L",
+      price: "150",
       images: [{ url: "https://picsum.photos/500/500?random=4" }],
     },
   ],
@@ -183,6 +187,36 @@ function Chekout() {
             )}
           </div>
         </form>
+      </div>
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg">Order Summary</h3>
+
+        <div className="border-t py-4 mb-4">
+          {cart.products.map((product, index) => (
+            <div
+              key={index}
+              className="flex items-start justify-between py-2 border-b"
+            >
+              <div className="flex items-start">
+                <img
+                  src={product.images[0].url}
+                  alt={product.name}
+                  className="h-20 w-20 object-cover mr-4"
+                />
+                <div>
+                  <h3 className="text-md">{product.name}</h3>
+                  <p className="text-gray-500">{product.size}</p>
+                  <p className="text-gray-500">{product.color}</p>
+                </div>
+              </div>
+              <p className="text-xl">₹ {product.price?.toLocaleString()}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between items-center text-lg mb-4">
+          <p>Subtotal</p>
+          <p>₹ {product.price?.toLocaleString()}</p>
+        </div>
       </div>
     </div>
   );
