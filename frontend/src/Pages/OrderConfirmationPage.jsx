@@ -9,7 +9,8 @@ const chekout = {
       color: "Black",
       price: 133,
       quantity: 1,
-      Image: "",
+      Image:
+        "https://www.bing.com/th/id/OIP.bO4pS4CxtlOHb0LsEMiIWwHaIf?w=171&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
     },
     {
       productId: "125397445468",
@@ -18,7 +19,8 @@ const chekout = {
       color: "Red",
       price: 3356,
       quantity: 1,
-      Image: "",
+      Image:
+        "https://www.bing.com/th/id/OIP.SAEHv-JSa7p8FJHvMCyBTQHaHa?w=204&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
     },
   ],
   ShipingAddress: {
@@ -50,10 +52,49 @@ function OrderConfirmationPage() {
               </p>
             </div>
             {/* Estimated Delivery */}
-            <p className="text-emerald-700 text-sm">
-              Estemated Delivery :{" "}
-              {calculateEstimateDelivery(chekout.createdAt)}
-            </p>
+            <div>
+              <p className="text-emerald-700 text-sm">
+                Estemated Delivery :{" "}
+                {calculateEstimateDelivery(chekout.createdAt)}
+              </p>
+            </div>
+          </div>
+          <div className="mb-20">
+            {chekout.checkoutItems.map((item) => (
+              <div key={item.productId} className="flex items-center mb-4 ">
+                <img
+                  src={item.Image}
+                  alt={item.name}
+                  className="w-16 h-16 object-cover rounded-md mr-4"
+                />
+                <div>
+                  <h4 className="text-md font-semibold">{item.name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {item.color} | {item.size}
+                  </p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className="text-md">$ {item.price}</p>
+                  <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Payment and Delivery Information */}
+          <div className="grid grid-cols-2 gap-8">
+            {/* Payment Info */}
+            <div>
+              <h4 className="text-lg font-semibold mb-2">Payment</h4>
+              <p className="text-gray-600">PayPal</p>
+            </div>
+            {/* Delivery Info */}
+            <div>
+              <h4 className="text-lg font-semibold mb-2">Delivery</h4>
+              <p className="text-gray-600">
+                {chekout.ShipingAddress.address}, {chekout.ShipingAddress.city},{" "}
+                {chekout.ShipingAddress.country}
+              </p>
+            </div>
           </div>
         </div>
       )}
