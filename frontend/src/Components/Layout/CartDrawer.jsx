@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 function CartDrawer({ isOpen, onClose }) {
   const navigate = useNavigate();
   const handleChekout = () => {
+    onClose();
     navigate("/chekout");
   };
   return (

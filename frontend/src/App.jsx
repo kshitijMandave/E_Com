@@ -10,6 +10,7 @@ import CollectionPage from "./Pages/CollectionPage";
 import ProductDetails from "./Components/Products/ProductDetails";
 import Chekout from "./Components/Cart/Chekout";
 import OrderConfirmationPage from "./Pages/OrderConfirmationPage";
+import OrderDetailsPage from "./Pages/OrderDetailsPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             path="order-confirmation"
             element={<OrderConfirmationPage />}
           />
+          <Route path="order/:id" element={<OrderDetailsPage />} />
         </Route>
         {/* You can define Admin layout here later */}
       </Routes>
