@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
+import AdminHomePage from "../../Pages/AdminHomePage";
+import { Outlet } from "react-router-dom";
 
 function Admin() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -39,7 +41,7 @@ function Admin() {
       {/* Main Content Area */}
       <div className="flex-1 p-4">
         {/* Add your main content here */}
-        <h2 className="text-2xl font-semibold">Welcome to Admin Panel</h2>
+        <Outlet />
       </div>
     </div>
   );
