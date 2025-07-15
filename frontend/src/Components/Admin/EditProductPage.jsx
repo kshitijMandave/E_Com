@@ -21,6 +21,11 @@ function EditProductPage() {
     const { name, value } = e.target;
     setProductsData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.file[0];
+    console.log(file);
+  };
   return (
     <div className="max-w-7xl mx-auto p-6 shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
@@ -129,12 +134,7 @@ function EditProductPage() {
           {/*Image Upload */}
           <div className="mb-6">
             <label className="block font-semibold mb-2">Upload Image</label>
-            <input
-              type="file"
-              onChange={handleImageUpload}
-              className="w-full border border-gray-300 rounded-md p-2"
-              required
-            />
+            <input type="file" onChange={handleImageUpload} required />
           </div>
         </div>
       </form>
