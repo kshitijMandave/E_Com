@@ -14,7 +14,14 @@ function EditProductPage() {
     collections: "",
     material: "",
     gender: "",
-    images: [{ url: "" }, { url: "" }],
+    images: [
+      {
+        url: "https://www.musclefitbasics.com/cdn/shop/products/darkgreen_900x.jpg?v=1591928016",
+      },
+      {
+        url: "https://www.musclefitbasics.com/cdn/shop/products/darkgreen2_900x.jpg?v=1591928016",
+      },
+    ],
   });
 
   const handleChange = (e) => {
@@ -27,7 +34,7 @@ function EditProductPage() {
     console.log(file);
   };
   return (
-    <div className="max-w-7xl mx-auto p-6 shadow-md rounded-md">
+    <div className="max-w-5xl mx-auto p-6 shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-6">Edit Product</h2>
       <form>
         {/*Name */}
@@ -134,9 +141,35 @@ function EditProductPage() {
           {/*Image Upload */}
           <div className="mb-6">
             <label className="block font-semibold mb-2">Upload Image</label>
-            <input type="file" onChange={handleImageUpload} required />
+
+            <label className="inline-block px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700">
+              Choose File
+              <input
+                type="file"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+
+            <div className="flex gap-4 mt-4 flex-wrap">
+              {productsData.images.map((image, index) => (
+                <div key={index}>
+                  <img
+                    src={image.url}
+                    alt={image.url || "Product Image"}
+                    className="w-20 h-20 object-cover rounded-md shadow-md"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+        <button
+          type="submit"
+          className="w-full bg-green-500 hover:bg-green-600 rounded-md text-white py-2 transition-colors"
+        >
+          Upload Product
+        </button>
       </form>
     </div>
   );
