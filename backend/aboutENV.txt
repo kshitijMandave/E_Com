@@ -1,0 +1,5 @@
+What is dotenv??
+------------------
+1. dotenv is a Node.js package.
+2. It allows you to load environment variables from a .env file into process.env
+3. it is To keep sensitive data (like DB credentials, API keys, etc.) out of your source code.

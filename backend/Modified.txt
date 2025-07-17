@@ -1,0 +1,5 @@
+Date : July 17
+-------------------
+1. Changed the file name with "main": "server.js" in package.json.
+2. and wrote the scripts to run our server "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
