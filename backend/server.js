@@ -9,6 +9,8 @@ const dotenv = require("dotenv");
 
 const connectDB = require("./config/db");
 
+const UserRoutes = require("./routes/UserRoutes");
+
 const app = express();
 // Creating an instance of the Express application
 
@@ -31,6 +33,8 @@ connectDB();
 app.get("/", (req, res) => {
   res.send("Hi!! welcome to Aura API");
 });
+
+app.use("/api/users", UserRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost/${PORT}`);
