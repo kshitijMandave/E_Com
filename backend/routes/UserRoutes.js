@@ -11,23 +11,35 @@ router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Registration Logic
+    // Check if user already exists
     let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
-    if (user) return res.status(400).json({ message: "User already exists" });
+    // Create new user
     user = new User({ name, email, password });
-    await user.save();
-    // JWT Payload
-    const payload = { user: { id: user._id, role: user.role } };
 
-    // Sign  nd return the token along with user data
+    // Save user to DB
+    await user.save();
+
+    // Create JWT payload
+    const payload = {
+      user: {
+        id: user._id,
+        role: user.role, // assuming your model has 'role' field
+      },
+    };
+
+    // Sign JWT token and return with user data
     jwt.sign(
       payload,
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET, // secret from .env
       { expiresIn: "40h" },
       (err, token) => {
         if (err) throw err;
-        res.send(201).json({
+
+        return res.status(201).json({
           user: {
             id: user._id,
             name: user.name,
@@ -39,7 +51,7 @@ router.post("/register", async (req, res) => {
       }
     );
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     res.status(500).send("Server error");
   }
 });
