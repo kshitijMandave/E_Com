@@ -37,5 +37,5 @@ app.get("/", (req, res) => {
 app.use("/api/users", UserRoutes);
 
 app.listen(PORT, () => {
-  console.log(`server is running on http://localhost/${PORT}`);
+  console.log(`server is running on http://localhost:${PORT}`);
 });
