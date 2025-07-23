@@ -23,11 +23,11 @@ const protect = async (req, res, next) => {
       next(); // continue
     } catch (error) {
       console.error("Token verification failed:", error);
-      res.status(401).json({ message: "Not authorized" });
+      res.status(401).json({ message: "Not authorized, token faild" });
     }
   } else {
     res.status(401).json({ message: "Not authorized, no token" });
   }
 };
 
-module.exports = protect;
+module.exports = { protect };
