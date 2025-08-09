@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 // Middleware to protect routes
-const protect = async (req, resizeBy, next) => {
+const protect = async (req, res, next) => {
   let token;
 
   // Check for Bearer token
@@ -23,7 +23,7 @@ const protect = async (req, resizeBy, next) => {
       next(); // continue
     } catch (error) {
       console.error("Token verification failed:", error);
-      resizeBy.status(401).json({ message: "Not authorized, token faild" });
+      res.status(401).json({ message: "Not authorized, token faild" });
     }
   } else {
     res.status(401).json({ message: "Not authorized, no token provided" });
