@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
   res.send("Hi!! welcome to Aura API");
 });
 
+//API Routes
 app.use("/api/users", UserRoutes);
 
 app.listen(PORT, () => {

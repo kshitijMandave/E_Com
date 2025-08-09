@@ -12,11 +12,10 @@ router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Check if user already exists
+    // Registration logic
     let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+
+    if (user) return res.status(400).json({ message: "User already exists" });
 
     // Create new user
     user = new User({ name, email, password });
@@ -40,9 +39,10 @@ router.post("/register", async (req, res) => {
       (err, token) => {
         if (err) throw err;
 
+        // send response with user data and token
         return res.status(201).json({
           user: {
-            id: user._id,
+            _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
@@ -66,15 +66,13 @@ router.post("/login", async (req, res) => {
   try {
     // Find user by email
     let user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid user" });
-    }
+    if (!user) return res.status(400).json({ message: "Invalid Credentials" });
 
     // Match password using method from model
     const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid user" });
-    }
+
+    if (!isMatch)
+      return res.status(400).json({ message: "Invalid Credentials" });
 
     // Create JWT payload
     const payload = {
@@ -92,7 +90,7 @@ router.post("/login", async (req, res) => {
       (err, token) => {
         if (err) throw err;
 
-        return res.status(200).json({
+        return res.json({
           user: {
             id: user._id,
             name: user.name,
@@ -104,7 +102,7 @@ router.post("/login", async (req, res) => {
       }
     );
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).send("Server error");
   }
 });
