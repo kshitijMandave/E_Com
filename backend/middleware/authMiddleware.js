@@ -30,4 +30,13 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+// Middleware to check if user is admin
+const admin = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next(); // continue if user is admin
+  } else {
+    res.status(403).json({ message: "Not authorized as an admin" });
+  }
+};
+
+module.exports = { protect, admin };
