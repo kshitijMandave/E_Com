@@ -18,7 +18,7 @@ router.post("/", protect, admin, async (req, res) => {
       brand,
       size,
       colors,
-      collection,
+      collections,
       material,
       gender,
       images,
@@ -45,7 +45,7 @@ router.post("/", protect, admin, async (req, res) => {
       brand,
       size,
       colors,
-      collection,
+      collections,
       material,
       gender,
       images,
@@ -86,7 +86,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       brand,
       size,
       colors,
-      collection,
+      collections,
       material,
       gender,
       images,
@@ -116,7 +116,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       product.brand = brand || product.brand;
       product.size = size || product.size;
       product.colors = colors || product.colors;
-      product.collection = collection || product.collection;
+      product.collections = collections || product.collections;
       product.material = material || product.material;
       product.gender = gender || product.gender;
       product.images = images || product.images;
