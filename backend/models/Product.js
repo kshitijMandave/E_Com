@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+// here we are defining the schema for the Product model
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -107,4 +108,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// here we are exporting the Product model
 module.exports = mongoose.model("Product", productSchema);
