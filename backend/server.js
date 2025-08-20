@@ -11,6 +11,7 @@ const connectDB = require("./config/db");
 
 const UserRoutes = require("./routes/UserRoutes");
 const ProductRoutes = require("./routes/ProductRoutes");
+const CartRoutes = require("./routes/CartRoutes");
 
 const app = express();
 // Creating an instance of the Express application
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 //API Routes
 app.use("/api/users", UserRoutes);
 app.use("/api/products", ProductRoutes);
+app.use("/api/cart", CartRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost:${PORT}`);
