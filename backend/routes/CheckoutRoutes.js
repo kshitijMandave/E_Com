@@ -21,13 +21,12 @@ router.post("/", protect, async (req, res) => {
   try {
     const newCheckout = await Checkout.create({
       user: req.user._id,
-      checkoutItems,
+      checkoutItems: checkoutItems,
       shippingAddress,
       paymentMethod,
       totalPrice,
-      paymentStatus: "Pending",
+      paymentStatus: "pending",
       isPaid: false,
-      isFinalized: false,
     });
 
     console.log(`Checkout created for user: ${req.user._id}`);
@@ -42,7 +41,7 @@ router.post("/", protect, async (req, res) => {
 // @desc Update checkout to mark as paid after successful payment
 // @access Private
 router.put("/:id/pay", protect, async (req, res) => {
-  const { paymentMethod, paymentStatus, paymentDetails } = req.body;
+  const { paymentStatus, paymentDetails } = req.body;
 
   try {
     const checkout = await Checkout.findById(req.params.id);
@@ -80,9 +79,11 @@ router.post("/:id/finalize", protect, async (req, res) => {
     }
 
     if (checkout.isPaid && !checkout.isFinalized) {
+      // Create final order
       const finalOrder = await Order.create({
         user: checkout.user,
         orderItems: checkout.checkoutItems, // corrected field
+
         shippingAddress: checkout.shippingAddress,
         paymentMethod: checkout.paymentMethod,
         totalPrice: checkout.totalPrice,
@@ -99,10 +100,10 @@ router.post("/:id/finalize", protect, async (req, res) => {
       await checkout.save();
 
       // Delete the cart associated with the user
-      await Cart.findByIdAndDelete({ user: checkout.user });
-      return res.status(201).json(finalOrder);
+      await Cart.findOneAndDelete({ user: checkout.user });
+      res.status(201).json(finalOrder);
     } else if (checkout.isFinalized) {
-      res.status(201).json({ message: "Checkout already finalied" });
+      res.status(400).json({ message: "Checkout already finalized" });
     } else {
       res.status(400).json({ message: "Checkout is not paid" });
     }

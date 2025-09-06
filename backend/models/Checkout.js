@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
-const { checkout } = require("../routes/CartRoutes");
+// const { checkout } = require("../routes/CartRoutes");
 
 const checkoutItemSchema = new mongoose.Schema(
   {
     productId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
-      required: "true",
+      required: true,
     },
     name: {
       type: String,
@@ -58,7 +58,7 @@ const checkoutSchema = new mongoose.Schema(
       default: "pending",
     },
     paymentDetails: {
-      type: mongoose.Schema.Types.Mixed,
+      type: mongoose.Schema.Types.Mixed, //store payment related details
     },
     isFinalized: {
       type: Boolean,
