@@ -15,6 +15,7 @@ const CartRoutes = require("./routes/CartRoutes");
 const CheckoutRoutes = require("./routes/CheckoutRoutes");
 const OrderRoutes = require("./routes/OrderRoutes");
 const UploadRoutes = require("./routes/UploadRoutes");
+const SubscribeRoutes = require("./routes/SubscribeRoutes");
 
 const app = express();
 // Creating an instance of the Express application
@@ -46,6 +47,7 @@ app.use("/api/cart", CartRoutes);
 app.use("/api/checkout", CheckoutRoutes);
 app.use("/api/orders", OrderRoutes);
 app.use("/api/upload", UploadRoutes);
+app.use("/api", SubscribeRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost:${PORT}`);
