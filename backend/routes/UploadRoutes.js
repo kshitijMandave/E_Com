@@ -2,9 +2,10 @@ const express = require("express");
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
-const router = require("./OrderRoutes");
 
-require("dotenv").config;
+const router = express.Router();
+
+require("dotenv").config();
 
 // cloudinary Configuration
 cloudinary.config({
@@ -35,8 +36,18 @@ router.post("/", upload.single("image"), async (req, res) => {
         });
 
         // Use streamifigher to convert file buffer to a stream
-        stream;
+        streamifier.createReadStream(fileBuffer).pipe(stream);
       });
     };
-  } catch (error) {}
+    // Call the streamUpload function
+    const result = await streamUpload(req.file.buffer);
+
+    // Respond with the uplaod image URL
+    res.json({ image: result.secure_url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
+
+module.exports = router;
