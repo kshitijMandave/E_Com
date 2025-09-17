@@ -16,6 +16,7 @@ const CheckoutRoutes = require("./routes/CheckoutRoutes");
 const OrderRoutes = require("./routes/OrderRoutes");
 const UploadRoutes = require("./routes/UploadRoutes");
 const SubscribeRoutes = require("./routes/SubscribeRoutes");
+const AdminRoutes = require("./routes/AdminRoutes");
 
 const app = express();
 // Creating an instance of the Express application
@@ -48,6 +49,9 @@ app.use("/api/checkout", CheckoutRoutes);
 app.use("/api/orders", OrderRoutes);
 app.use("/api/upload", UploadRoutes);
 app.use("/api", SubscribeRoutes);
+
+// Admin
+app.use("/api/admin/users", AdminRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost:${PORT}`);
