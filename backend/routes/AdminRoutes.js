@@ -45,4 +45,46 @@ router.post("/", protect, admin, async (req, res) => {
   }
 });
 
+// @route PUT /api/admin/users/:id
+// @desc Update user info (admin only) - Name, email and Role
+// @access Private/Admin
+router.put("/:id", protect, admin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.role = req.body.role || user.role;
+
+      const updateUser = await user.save();
+      res.json({ message: "User updated successfully", user: updateUser });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route DELETE /api/admin/users/:id
+// @desc Delete a user
+// @access Private/Admin
+
+router.delete("/:id", protect, admin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      await user.deleteOne();
+      res.json({ message: "User Deleted Succesfully" });
+    } else {
+      res.status(404).json({ message: "User Not Found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
 module.exports = router;
