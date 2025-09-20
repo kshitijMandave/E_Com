@@ -5,38 +5,41 @@ import { registerUser } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 
 function Register() {
-  const [name, setName] = useState(""); // 👈 single name field
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(registerUser({ name, email, password })); // 👈 backend requires name
+    dispatch(registerUser({ name, email, password }));
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen">
       {/* Left side - Form */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 md:p-12">
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-4 py-8 sm:px-8 md:px-12 bg-gray-50 overflow-y-auto">
         <form
           onSubmit={handleSubmit}
-          className="w-full max-w-md bg-white p-8 rounded-lg border shadow-sm"
+          className="w-full max-w-md bg-white p-6 sm:p-8 rounded-lg border shadow-md"
         >
           <div className="flex justify-center mb-6">
-            <h2 className="text-xl font-medium">Aura</h2>
+            <h2 className="text-xl font-semibold">Aura</h2>
           </div>
-          <h2 className="text-2xl font-bold text-center mb-6">Hey there! 👋</h2>
-          <p className="text-center mb-6">Enter your details to Sign Up</p>
+
+          <h2 className="text-2xl font-bold text-center mb-4">Hey there! 👋</h2>
+          <p className="text-center text-sm sm:text-base mb-6">
+            Enter your details to Sign Up
+          </p>
 
           {/* Name */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Name</label>
+            <label className="block text-sm font-medium mb-2">Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your name"
               required
             />
@@ -44,25 +47,25 @@ function Register() {
 
           {/* Email */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Email</label>
+            <label className="block text-sm font-medium mb-2">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your email address"
               required
             />
           </div>
 
           {/* Password */}
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">Password</label>
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-2">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter your password"
               required
             />
@@ -70,7 +73,7 @@ function Register() {
 
           <button
             type="submit"
-            className="w-full bg-black text-white p-2 rounded-lg font-semibold hover:bg-gray-800"
+            className="w-full bg-black text-white p-2 rounded-lg font-semibold hover:bg-gray-800 transition"
           >
             Sign Up
           </button>
@@ -85,14 +88,12 @@ function Register() {
       </div>
 
       {/* Right side - Image */}
-      <div className="hidden md:block w-1/2 bg-gray-800 h-full">
-        <div className="h-full flex flex-col justify-center items-center">
-          <img
-            src={RegImg}
-            alt="Register Image"
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <div className="hidden md:flex md:w-1/2">
+        <img
+          src={RegImg}
+          alt="Register"
+          className="w-full h-full object-contain"
+        />
       </div>
     </div>
   );
