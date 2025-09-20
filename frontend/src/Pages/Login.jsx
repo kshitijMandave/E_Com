@@ -1,16 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import loginImg from "./login-image.jpg";
+import { loginUser } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(loginUser({ email, password }));
+  };
 
   return (
     <div className="flex h-screen">
       {/* Left side - Form */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 md:p-12">
-        <form className="w-full max-w-md bg-white p-8 rounded-lg border shadow-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md bg-white p-8 rounded-lg border shadow-sm"
+        >
           <div className="flex justify-center mb-6">
             <h2 className="text-xl font-medium">Aura</h2>
           </div>
@@ -27,6 +38,7 @@ function Login() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your email address"
+              required
             />
           </div>
 
@@ -38,6 +50,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your password"
+              required
             />
           </div>
 
@@ -49,7 +62,7 @@ function Login() {
           </button>
 
           <p className="mt-4 text-center text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link to="/register" className="text-blue-500 hover:underline">
               Register
             </Link>

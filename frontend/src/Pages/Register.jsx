@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import RegImg from "./register-img.jpg";
+import { registerUser } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 function Register() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState(""); // 👈 single name field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("User Registered : ", { firstName, lastName, email, password });
+    dispatch(registerUser({ name, email, password })); // 👈 backend requires name
   };
 
   return (
@@ -27,38 +29,20 @@ function Register() {
           <h2 className="text-2xl font-bold text-center mb-6">Hey there! 👋</h2>
           <p className="text-center mb-6">Enter your details to Sign Up</p>
 
+          {/* Name */}
           <div className="mb-4">
-            <div className="flex gap-4">
-              {/* First Name */}
-              <div className="w-1/2">
-                <label className="block text-sm font-semibold mb-2">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full p-2 border rounded"
-                  placeholder="First Name"
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="w-1/2">
-                <label className="block text-sm font-semibold mb-2">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full p-2 border rounded"
-                  placeholder="Last Name"
-                />
-              </div>
-            </div>
+            <label className="block text-sm font-semibold mb-2">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border rounded"
+              placeholder="Enter your name"
+              required
+            />
           </div>
 
+          {/* Email */}
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Email</label>
             <input
@@ -67,9 +51,11 @@ function Register() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your email address"
+              required
             />
           </div>
 
+          {/* Password */}
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2">Password</label>
             <input
@@ -78,6 +64,7 @@ function Register() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your password"
+              required
             />
           </div>
 
