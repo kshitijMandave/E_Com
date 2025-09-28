@@ -46,11 +46,10 @@ const ordersSlice = createSlice({
   name: "orders",
   initialState: {
     orders: [],
+    totalOrders: 0,
     orderDetails: null,
-    loadingOrders: false,
-    loadingOrderDetails: false,
-    errorOrders: null,
-    errorOrderDetails: null,
+    loading: false,
+    error: null,
   },
   reducers: {
     // optional synchronous reducers if needed
@@ -63,35 +62,33 @@ const ordersSlice = createSlice({
     // fetchUserOrders
     builder
       .addCase(fetchUserOrders.pending, (state) => {
-        state.loadingOrders = true;
-        state.errorOrders = null;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchUserOrders.fulfilled, (state, action) => {
-        state.loadingOrders = false;
+        state.loading = false;
         state.orders = action.payload;
       })
       .addCase(fetchUserOrders.rejected, (state, action) => {
-        state.loadingOrders = false;
-        state.errorOrders = action.payload;
+        state.loading = false;
+        state.error = action.payload.message;
       });
 
     // fetchOrderDetails
     builder
       .addCase(fetchOrderDetails.pending, (state) => {
-        state.loadingOrderDetails = true;
-        state.errorOrderDetails = null;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchOrderDetails.fulfilled, (state, action) => {
-        state.loadingOrderDetails = false;
+        state.loading = false;
         state.orderDetails = action.payload;
       })
       .addCase(fetchOrderDetails.rejected, (state, action) => {
-        state.loadingOrderDetails = false;
-        state.errorOrderDetails = action.payload;
+        state.loading = false;
+        state.error = action.payload.message;
       });
   },
 });
-
-export const { clearOrderDetails } = ordersSlice.actions;
 
 export default ordersSlice.reducer;
