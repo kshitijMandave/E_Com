@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Hero from "../Components/Layout/Hero";
 import FeaturedCollection from "../Components/Products/FeaturedCollection";
 import FeatureSection from "../Components/Products/FeatureSection";
@@ -5,59 +6,41 @@ import GenderCollectionSection from "../Components/Products/GenderCollectionSect
 import NewArrival from "../Components/Products/NewArrival";
 import ProductDetails from "../Components/Products/ProductDetails";
 import ProductGrid from "../Components/Products/ProductGrid";
-
-const placeholderProducts = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=1" }],
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 120,
-    images: [{ url: "https://picsum.photos/500/500?random=2" }],
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 150,
-    images: [{ url: "https://picsum.photos/500/500?random=3" }],
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: 90,
-    images: [{ url: "https://picsum.photos/500/500?random=4" }],
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    price: 110,
-    images: [{ url: "https://picsum.photos/500/500?random=5" }],
-  },
-  {
-    id: 6,
-    name: "Product 6",
-    price: 130,
-    images: [{ url: "https://picsum.photos/500/500?random=6" }],
-  },
-  {
-    id: 7,
-    name: "Product 7",
-    price: 95,
-    images: [{ url: "https://picsum.photos/500/500?random=7" }],
-  },
-  {
-    id: 8,
-    name: "Product 8",
-    price: 160,
-    images: [{ url: "https://picsum.photos/500/500?random=8" }],
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsByFilters } from "../redux/slices/productsSlice";
+import axios from "axios";
 
 function Home() {
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+  const [bestSellerProduct, setBestSellerProduct] = useState(null);
+
+  useEffect(() => {
+    // Fetch filtered products from Redux
+    dispatch(
+      fetchProductsByFilters({
+        gender: "Women",
+        category: "Bottom Wear",
+        limit: 8,
+      })
+    );
+
+    // Fetch best seller product from backend
+    const fetchBestSeller = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`
+        );
+        // Assuming API returns an array of products
+        setBestSellerProduct(response.data[0] || null);
+      } catch (error) {
+        console.error("Failed to fetch best seller product:", error);
+      }
+    };
+
+    fetchBestSeller();
+  }, [dispatch]);
+
   return (
     <div>
       <Hero />
@@ -66,13 +49,24 @@ function Home() {
 
       {/* Best Seller */}
       <h2 className="text-3xl text-center font-bold mb-4">Best Seller</h2>
-      <ProductDetails />
+      {bestSellerProduct ? (
+        <ProductDetails productId={bestSellerProduct._id} />
+      ) : (
+        <p className="text-center">Loading best seller products...</p>
+      )}
 
-      <div className="container mx-auto">
+      {/* Top Wears for Women */}
+      <div className="container mx-auto my-8">
         <h2 className="text-3xl text-center font-bold mb-4">
           Top Wears for Women
         </h2>
-        <ProductGrid products={placeholderProducts} />
+        {loading ? (
+          <p className="text-center">Loading products...</p>
+        ) : error ? (
+          <p className="text-red-500 text-center">{error}</p>
+        ) : (
+          <ProductGrid products={products} loading={loading} error={error} />
+        )}
       </div>
 
       <FeaturedCollection />

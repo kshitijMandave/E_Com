@@ -1,56 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ProductGrid from "./ProductGrid";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-const selectedProduct = {
-  name: "Stylish Jacket",
-  price: 120,
-  originalPrice: 150,
-  description: "This is a stylish Jacket perfect for any occasion",
-  brand: "FashionBrand",
-  material: "Leather",
-  sizes: ["S", "M", "L", "XL"],
-  colors: ["Red", "Black"],
-  images: [
-    {
-      url: "https://picsum.photos/500/500?random=1",
-      altText: "Stylish Jacket 1",
-    },
-    {
-      url: "https://picsum.photos/500/500?random=2",
-      altText: "Stylish Jacket 2",
-    },
-  ],
-};
+function ProductDetails({ productId }) {
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-const similerProducts = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 100,
-    images: [{ url: "https://picsum.photos/500/500?random=3" }],
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 150,
-    images: [{ url: "https://picsum.photos/500/500?random=4" }],
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 120,
-    images: [{ url: "https://picsum.photos/500/500?random=5" }],
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: 200,
-    images: [{ url: "https://picsum.photos/500/500?random=6" }],
-  },
-];
+  const { selectedProduct, loading, error, similerProducts } = useSelector(
+    (state) => state.products
+  );
 
-function ProductDetails() {
+  const user = useSelector((state) => state.auth); // fixed
+
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -61,7 +24,7 @@ function ProductDetails() {
     if (selectedProduct?.images?.length > 0) {
       setMainImage(selectedProduct.images[0].url);
     }
-  }, []);
+  }, [selectedProduct]); // add dependency so it updates on product change
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
@@ -73,15 +36,18 @@ function ProductDetails() {
     setTimeout(() => {
       setIsAdding(false);
       toast.success("Product added to cart!");
-    }, 3000);
+    }, 1000); // 1 second is enough for demo
   };
+
+  if (!selectedProduct) return <div>Loading...</div>;
 
   return (
     <div className="p-6">
       <div className="max-w-6xl mx-auto bg-white p-8 rounded-lg">
         <div className="flex flex-col md:flex-row">
+          {/* Thumbnails */}
           <div className="hidden md:flex flex-col space-y-4 mr-6">
-            {selectedProduct.images.map((image, index) => (
+            {selectedProduct.images?.map((image, index) => (
               <img
                 key={index}
                 src={image.url}
@@ -94,6 +60,7 @@ function ProductDetails() {
             ))}
           </div>
 
+          {/* Main Image */}
           <div className="md:w-1/2">
             <img
               src={mainImage}
@@ -101,7 +68,7 @@ function ProductDetails() {
               className="w-full h-auto object-cover rounded-lg"
             />
             <div className="md:hidden flex overflow-x-scroll space-x-4 my-4">
-              {selectedProduct.images.map((image, index) => (
+              {selectedProduct.images?.map((image, index) => (
                 <img
                   key={index}
                   src={image.url}
@@ -115,6 +82,7 @@ function ProductDetails() {
             </div>
           </div>
 
+          {/* Product Info */}
           <div className="md:w-1/2 md:ml-10 mt-4 md:mt-0">
             <h1 className="text-3xl font-semibold mb-2">
               {selectedProduct.name}
@@ -134,10 +102,11 @@ function ProductDetails() {
               <strong>Material:</strong> {selectedProduct.material}
             </p>
 
+            {/* Colors */}
             <div className="mb-4">
               <strong>Colors:</strong>
               <div className="flex items-center mt-2">
-                {selectedProduct.colors.map((color) => (
+                {selectedProduct.colors?.map((color) => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
@@ -146,19 +115,17 @@ function ProductDetails() {
                         ? "border-4 border-black"
                         : "border-gray-300"
                     }`}
-                    style={{
-                      backgroundColor: color.toLowerCase(),
-                      filter: "brightness(0.5)",
-                    }}
+                    style={{ backgroundColor: color.toLowerCase() }}
                   ></button>
                 ))}
               </div>
             </div>
 
+            {/* Sizes */}
             <div className="mb-4">
               <p className="text-gray-700">Size:</p>
               <div className="flex gap-2 mt-2">
-                {selectedProduct.sizes.map((size) => (
+                {selectedProduct.sizes?.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
@@ -172,6 +139,7 @@ function ProductDetails() {
               </div>
             </div>
 
+            {/* Quantity */}
             <div className="mb-6">
               <p className="text-gray-700">Quantity:</p>
               <div className="flex items-center space-x-4 mt-2">
@@ -202,6 +170,7 @@ function ProductDetails() {
               {isAdding ? "Adding..." : "ADD TO CART"}
             </button>
 
+            {/* Characteristics */}
             <div className="mt-10 text-gray-700">
               <h3 className="text-xl font-bold mb-4">Characteristics:</h3>
               <table className="w-full text-left text-sm text-gray-600">
@@ -220,6 +189,7 @@ function ProductDetails() {
           </div>
         </div>
 
+        {/* Similar Products */}
         <div className="mt-20">
           <h2 className="text-3xl text-center font-bold mb-4">
             You May Also Like
