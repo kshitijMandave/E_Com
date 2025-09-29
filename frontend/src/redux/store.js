@@ -18,6 +18,7 @@ const store = configureStore({
     admin: adminReducer,
     adminProducts: adminProductReducer,
     adminOrders: adminOrderReducer,
+    // and today we completed the redux integration
   },
 });
 
