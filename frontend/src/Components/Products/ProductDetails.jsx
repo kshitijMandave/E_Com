@@ -1,45 +1,48 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import ProductGrid from "./ProductGrid";
-import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchProductDetails,
+  fetchSimilarProducts,
+} from "../../redux/slices/productsSlice";
 
-function ProductDetails({ productId }) {
-  const { id } = useParams();
+function ProductDetails({ productId, product }) {
   const dispatch = useDispatch();
-
-  const { selectedProduct, loading, error, similerProducts } = useSelector(
+  const { productDetails, similarProducts, loading, error } = useSelector(
     (state) => state.products
   );
 
-  const user = useSelector((state) => state.auth); // fixed
-
+  // Use passed product directly, else fetch by ID
+  const [selectedProduct, setSelectedProduct] = useState(product || null);
   const [mainImage, setMainImage] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [isAdding, setIsAdding] = useState(false);
+
+  useEffect(() => {
+    if (!product && productId) {
+      dispatch(fetchProductDetails(productId));
+      dispatch(fetchSimilarProducts(productId));
+    }
+  }, [dispatch, productId, product]);
+
+  useEffect(() => {
+    if (!product && productDetails) {
+      setSelectedProduct(productDetails);
+      setMainImage(productDetails.images?.[0]?.url || "");
+    }
+  }, [productDetails, product]);
 
   useEffect(() => {
     if (selectedProduct?.images?.length > 0) {
       setMainImage(selectedProduct.images[0].url);
     }
-  }, [selectedProduct]); // add dependency so it updates on product change
+  }, [selectedProduct]);
 
-  const handleAddToCart = () => {
-    if (!selectedSize || !selectedColor) {
-      toast.error("Please select size and color before adding to cart");
-      return;
-    }
-
-    setIsAdding(true);
-    setTimeout(() => {
-      setIsAdding(false);
-      toast.success("Product added to cart!");
-    }, 1000); // 1 second is enough for demo
-  };
-
-  if (!selectedProduct) return <div>Loading...</div>;
+  if (loading && !selectedProduct)
+    return <div className="text-center">Loading product...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!selectedProduct)
+    return <div className="text-center">No product found</div>;
 
   return (
     <div className="p-6">
@@ -63,7 +66,7 @@ function ProductDetails({ productId }) {
           {/* Main Image */}
           <div className="md:w-1/2">
             <img
-              src={mainImage}
+              src={mainImage || "/placeholder.png"}
               alt="Main product"
               className="w-full h-auto object-cover rounded-lg"
             />
@@ -87,57 +90,67 @@ function ProductDetails({ productId }) {
             <h1 className="text-3xl font-semibold mb-2">
               {selectedProduct.name}
             </h1>
-            <p className="text-lg text-gray-600 line-through">
-              ₹{selectedProduct.originalPrice}
-            </p>
+            {selectedProduct.originalPrice && (
+              <p className="text-lg text-gray-600 line-through">
+                ₹{selectedProduct.originalPrice}
+              </p>
+            )}
             <p className="text-xl font-bold text-red-600 mb-2">
               ₹{selectedProduct.price}
             </p>
             <p className="text-gray-700 mb-4">{selectedProduct.description}</p>
 
-            <p className="mb-2">
-              <strong>Brand:</strong> {selectedProduct.brand}
-            </p>
-            <p className="mb-4">
-              <strong>Material:</strong> {selectedProduct.material}
-            </p>
+            {selectedProduct.brand && (
+              <p className="mb-2">
+                <strong>Brand:</strong> {selectedProduct.brand}
+              </p>
+            )}
+            {selectedProduct.material && (
+              <p className="mb-4">
+                <strong>Material:</strong> {selectedProduct.material}
+              </p>
+            )}
 
             {/* Colors */}
-            <div className="mb-4">
-              <strong>Colors:</strong>
-              <div className="flex items-center mt-2">
-                {selectedProduct.colors?.map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => setSelectedColor(color)}
-                    className={`w-8 h-8 rounded-full border mr-2 ${
-                      selectedColor === color
-                        ? "border-4 border-black"
-                        : "border-gray-300"
-                    }`}
-                    style={{ backgroundColor: color.toLowerCase() }}
-                  ></button>
-                ))}
+            {selectedProduct.colors?.length > 0 && (
+              <div className="mb-4">
+                <strong>Colors:</strong>
+                <div className="flex items-center mt-2">
+                  {selectedProduct.colors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`w-8 h-8 rounded-full border mr-2 ${
+                        selectedColor === color
+                          ? "border-4 border-black"
+                          : "border-gray-300"
+                      }`}
+                      style={{ backgroundColor: color.toLowerCase() }}
+                    ></button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Sizes */}
-            <div className="mb-4">
-              <p className="text-gray-700">Size:</p>
-              <div className="flex gap-2 mt-2">
-                {selectedProduct.sizes?.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 rounded border ${
-                      selectedSize === size ? "bg-black text-white" : ""
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+            {selectedProduct.sizes?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-gray-700">Size:</p>
+                <div className="flex gap-2 mt-2">
+                  {selectedProduct.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 rounded border ${
+                        selectedSize === size ? "bg-black text-white" : ""
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="mb-6">
@@ -160,41 +173,15 @@ function ProductDetails({ productId }) {
             </div>
 
             <button
-              onClick={handleAddToCart}
               className={`py-2 px-6 rounded w-full mb-4 ${
                 !selectedSize || !selectedColor
                   ? "bg-gray-400 text-white"
                   : "bg-black text-white"
               }`}
             >
-              {isAdding ? "Adding..." : "ADD TO CART"}
+              ADD TO CART
             </button>
-
-            {/* Characteristics */}
-            <div className="mt-10 text-gray-700">
-              <h3 className="text-xl font-bold mb-4">Characteristics:</h3>
-              <table className="w-full text-left text-sm text-gray-600">
-                <tbody>
-                  <tr>
-                    <td className="py-1">Brand</td>
-                    <td className="py-1">{selectedProduct.brand}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-1">Material</td>
-                    <td className="py-1">{selectedProduct.material}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
-        </div>
-
-        {/* Similar Products */}
-        <div className="mt-20">
-          <h2 className="text-3xl text-center font-bold mb-4">
-            You May Also Like
-          </h2>
-          <ProductGrid products={similerProducts} />
         </div>
       </div>
     </div>

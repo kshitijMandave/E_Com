@@ -308,7 +308,7 @@ router.get("/:id", async (req, res) => {
   // @route GET  /api/products/similer/:id
   // @desc Retrive Similer Product Based on current Product
   // @access Public
-  router.get("/similer/:id", async (req, res) => {
+  router.get("/similar/:id", async (req, res) => {
     const { id } = req.params;
     console.log(id);
     try {

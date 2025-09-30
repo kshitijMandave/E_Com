@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Async thunk for fetching products with filters
+// Fetch products with filters
 export const fetchProductsByFilters = createAsyncThunk(
   "products/fetchByFilters",
   async ({
@@ -19,7 +19,6 @@ export const fetchProductsByFilters = createAsyncThunk(
     limit,
   }) => {
     const query = new URLSearchParams();
-
     if (collection) query.append("collection", collection);
     if (size) query.append("size", size);
     if (color) query.append("color", color);
@@ -40,29 +39,12 @@ export const fetchProductsByFilters = createAsyncThunk(
   }
 );
 
-// Fetch single product details
+// Fetch product details
 export const fetchProductDetails = createAsyncThunk(
   "products/fetchProductDetails",
   async (id) => {
     const response = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`
-    );
-    return response.data;
-  }
-);
-
-// Update a product
-export const updateProduct = createAsyncThunk(
-  "products/updateProduct",
-  async ({ id, productData }) => {
-    const response = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`,
-      productData,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      }
     );
     return response.data;
   }
@@ -79,65 +61,30 @@ export const fetchSimilarProducts = createAsyncThunk(
   }
 );
 
-// Slice
 const productSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
-    productDetails: null, //Store the details
+    productDetails: null,
     similarProducts: [],
     loading: false,
     error: null,
-    filters: {
-      category: "",
-      size: "",
-      color: "",
-      gender: "",
-      brand: "",
-      minPrice: "",
-      maxPrice: "",
-      sortBy: "",
-      search: "",
-      material: "",
-      collection: "",
-    },
   },
-  reducers: {
-    setFilters: (state, action) => {
-      state.filters = { ...state.filters, ...action.payload };
-    },
-    clearFilters: (state) => {
-      state.filters = {
-        category: "",
-        size: "",
-        color: "",
-        gender: "",
-        brand: "",
-        minPrice: "",
-        maxPrice: "",
-        sortBy: "",
-        search: "",
-        material: "",
-        collection: "",
-      };
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetching products with filter
       .addCase(fetchProductsByFilters.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchProductsByFilters.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = Array.isArray(action.payload) ? action.payload : [];
+        state.products = action.payload;
       })
       .addCase(fetchProductsByFilters.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })
 
-      // Fetch product details
       .addCase(fetchProductDetails.pending, (state) => {
         state.loading = true;
       })
@@ -150,26 +97,6 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
 
-      // Update product
-      .addCase(updateProduct.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(updateProduct.fulfilled, (state, action) => {
-        state.loading = false;
-        const updatedProduct = action.payload;
-        const index = state.products.findIndex(
-          (product) => product._id === updatedProduct._id
-        );
-        if (index !== -1) {
-          state.products[index] = updatedProduct;
-        }
-      })
-      .addCase(updateProduct.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
-      // Fetch similar products
       .addCase(fetchSimilarProducts.pending, (state) => {
         state.loading = true;
       })
@@ -184,5 +111,4 @@ const productSlice = createSlice({
   },
 });
 
-export const { setFilters, clearFilters } = productSlice.actions;
 export default productSlice.reducer;
