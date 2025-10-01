@@ -37,11 +37,13 @@ const productSchema = new mongoose.Schema(
     brand: {
       type: String,
     },
-    size: {
+    sizes: {
+      // ✅ renamed to plural
       type: [String],
       required: true,
     },
     colors: {
+      // ✅ already plural, good
       type: [String],
       required: true,
     },
@@ -89,16 +91,11 @@ const productSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    metaTitle: {
-      type: String,
-    },
-    metaDescription: {
-      type: String,
-    },
-    metaKeywords: {
-      type: String,
-    },
-    diamensions: {
+    metaTitle: String,
+    metaDescription: String,
+    metaKeywords: String,
+    dimensions: {
+      // ✅ typo fixed (was diamensions)
       length: Number,
       width: Number,
       height: Number,
@@ -108,5 +105,5 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// here we are exporting the Product model
+// export Product model
 module.exports = mongoose.model("Product", productSchema);

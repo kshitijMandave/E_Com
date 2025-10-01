@@ -1,67 +1,53 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Fetch products with filters
-export const fetchProductsByFilters = createAsyncThunk(
-  "products/fetchByFilters",
-  async ({
-    collection,
-    size,
-    color,
-    gender,
-    minPrice,
-    maxPrice,
-    sortBy,
-    search,
-    category,
-    material,
-    brand,
-    limit,
-  }) => {
-    const query = new URLSearchParams();
-    if (collection) query.append("collection", collection);
-    if (size) query.append("size", size);
-    if (color) query.append("color", color);
-    if (gender) query.append("gender", gender);
-    if (minPrice) query.append("minPrice", minPrice);
-    if (maxPrice) query.append("maxPrice", maxPrice);
-    if (sortBy) query.append("sortBy", sortBy);
-    if (search) query.append("search", search);
-    if (category) query.append("category", category);
-    if (material) query.append("material", material);
-    if (brand) query.append("brand", brand);
-    if (limit) query.append("limit", limit);
-
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products?${query.toString()}`
-    );
-    return response.data;
-  }
-);
-
 // Fetch product details
 export const fetchProductDetails = createAsyncThunk(
   "products/fetchProductDetails",
-  async (id) => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`
-    );
-    return response.data;
+  async (productId, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
   }
 );
 
 // Fetch similar products
 export const fetchSimilarProducts = createAsyncThunk(
   "products/fetchSimilarProducts",
-  async (id) => {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}`
-    );
-    return response.data;
+  async (productId, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${productId}`
+      );
+      return res.data; // array of similar products
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
   }
 );
 
-const productSlice = createSlice({
+// Fetch products by filters (used in Home)
+export const fetchProductsByFilters = createAsyncThunk(
+  "products/fetchProductsByFilters",
+  async (filters, { rejectWithValue }) => {
+    try {
+      const params = new URLSearchParams(filters).toString();
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products?${params}`
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
+const productsSlice = createSlice({
   name: "products",
   initialState: {
     products: [],
@@ -72,21 +58,11 @@ const productSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
+    // Product Details
     builder
-      .addCase(fetchProductsByFilters.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchProductsByFilters.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products = action.payload;
-      })
-      .addCase(fetchProductsByFilters.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-
       .addCase(fetchProductDetails.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchProductDetails.fulfilled, (state, action) => {
         state.loading = false;
@@ -94,11 +70,14 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductDetails.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
-      })
+        state.error = action.payload;
+      });
 
+    // Similar Products
+    builder
       .addCase(fetchSimilarProducts.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchSimilarProducts.fulfilled, (state, action) => {
         state.loading = false;
@@ -106,9 +85,24 @@ const productSlice = createSlice({
       })
       .addCase(fetchSimilarProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
+      });
+
+    // Products by filters
+    builder
+      .addCase(fetchProductsByFilters.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductsByFilters.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = action.payload;
+      })
+      .addCase(fetchProductsByFilters.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export default productSlice.reducer;
+export default productsSlice.reducer;

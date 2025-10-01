@@ -27,13 +27,25 @@ function Home() {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`
         );
-        setBestSellerProduct(res.data);
+        if (res.data && res.data._id) {
+          setBestSellerProduct(res.data);
+        }
       } catch (err) {
         console.error("Failed to fetch best seller:", err);
       }
     };
 
     fetchBestSeller();
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      fetchProductsByFilters({
+        gender: "Women",
+        category: "Top Wear",
+        limit: 8,
+      })
+    );
   }, [dispatch]);
 
   return (
@@ -51,14 +63,22 @@ function Home() {
       )}
 
       {/* Top Wears */}
+      {/* Top Wears for Women */}
       <div className="container mx-auto my-8">
-        <h2 className="text-3xl font-bold text-center mb-4">Top Wears</h2>
+        <h2 className="text-3xl font-bold text-center mb-4">
+          Top Wears - Women
+        </h2>
         {loading ? (
           <p className="text-center">Loading products...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
         ) : (
-          <ProductGrid products={products} />
+          <ProductGrid
+            products={products.filter(
+              (product) =>
+                product.gender === "Women" && product.category === "Top Wear"
+            )}
+          />
         )}
       </div>
 
