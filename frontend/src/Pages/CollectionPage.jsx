@@ -1,118 +1,86 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaFilter } from "react-icons/fa";
-import FilterSideBar from "../Components/Products/FilterSideBar";
+import FilterSidebar from "../Components/Products/FilterSidebar";
 import SortOptions from "../Components/Products/SortOptions";
 import ProductGrid from "../Components/Products/ProductGrid";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsByFilters } from "../redux/slices/productsSlice";
 
-function CollectionPage() {
-  const [products, setProducts] = useState([]);
-  const sidebarRef = useRef(null);
+const CollectionPage = () => {
+  const { collection } = useParams();
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+
   const [isSideBarOpen, setSideBarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setSideBarOpen(!isSideBarOpen);
-  };
-
-  const handleClickOutside = (e) => {
-    //Close slide bar if clicked outside
-    if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
-      setSideBarOpen(false);
-    }
-  };
-
+  // Fetch products whenever filters change
   useEffect(() => {
-    //Add event listener for clicks
-    document.addEventListener("mousedown", handleClickOutside);
-    //Clean event listner
+    const filters = Object.fromEntries([...searchParams]);
+    dispatch(fetchProductsByFilters({ collection, ...filters }));
+  }, [dispatch, collection, searchParams]);
+
+  // Disable scroll when sidebar is open and remove horizontal scroll
+  useEffect(() => {
+    document.body.style.overflow = isSideBarOpen ? "hidden" : "auto";
+    document.body.style.overflowX = "hidden"; // <- fix horizontal scroll
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "auto";
+      document.body.style.overflowX = "hidden";
     };
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const fetchedProducts = [
-        {
-          id: 1,
-          name: "Product 1",
-          price: 100,
-          images: [{ url: "https://picsum.photos/500/500?random=1" }],
-        },
-        {
-          id: 2,
-          name: "Product 2",
-          price: 120,
-          images: [{ url: "https://picsum.photos/500/500?random=2" }],
-        },
-        {
-          id: 3,
-          name: "Product 3",
-          price: 150,
-          images: [{ url: "https://picsum.photos/500/500?random=3" }],
-        },
-        {
-          id: 4,
-          name: "Product 4",
-          price: 90,
-          images: [{ url: "https://picsum.photos/500/500?random=4" }],
-        },
-        {
-          id: 5,
-          name: "Product 5",
-          price: 110,
-          images: [{ url: "https://picsum.photos/500/500?random=5" }],
-        },
-        {
-          id: 6,
-          name: "Product 6",
-          price: 130,
-          images: [{ url: "https://picsum.photos/500/500?random=6" }],
-        },
-        {
-          id: 7,
-          name: "Product 7",
-          price: 95,
-          images: [{ url: "https://picsum.photos/500/500?random=7" }],
-        },
-        {
-          id: 8,
-          name: "Product 8",
-          price: 160,
-          images: [{ url: "https://picsum.photos/500/500?random=8" }],
-        },
-      ];
-      setProducts(fetchedProducts);
-    }, 1000);
-  }, []);
+  }, [isSideBarOpen]);
 
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col lg:flex-row overflow-x-hidden">
+      {/* Mobile filter overlay */}
+      {isSideBarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 lg:hidden"
+          onClick={() => setSideBarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`
+          fixed top-0 left-0 h-full bg-white shadow-lg overflow-y-auto z-50
+          transform transition-transform duration-300
+          w-[95vw] sm:w-[30rem] md:w-[40rem] lg:w-[50rem] max-w-full
+          ${isSideBarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:static lg:translate-x-0 lg:shadow-none
+        `}
+      >
+        <FilterSidebar
+          isOpen={isSideBarOpen}
+          onClose={() => setSideBarOpen(false)}
+        />
+      </div>
+
       {/* Mobile Filter Button */}
       <button
-        onClick={toggleSidebar}
-        className="lg:hidden border p-2 flex justify-center items-center mt-4 ml-4 bg-white shadow-md z-50"
+        onClick={() => setSideBarOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-50 flex items-center gap-2 px-3 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
       >
-        <FaFilter className="mr-2" /> Filters
+        <FaFilter /> Filters
       </button>
 
-      {/* Filter Sidebar */}
-      <div
-        ref={sidebarRef}
-        className={`${
-          isSideBarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-y-0 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
-      >
-        <FilterSideBar />
-      </div>
-      <div className="flex-grow p-4">
-        <h2 className="text-2xl uppercase mb-4">All Collection</h2>
-        {/*Sort Options */}
-        <SortOptions />
+      {/* Main Content */}
+      <div className="flex-grow p-4 lg:p-8 overflow-x-hidden">
+        <h2 className="text-2xl font-semibold uppercase mb-6 text-gray-800">
+          {collection ? collection.replace("-", " ") : "All Collections"}
+        </h2>
 
-        <ProductGrid products={products} />
+        {/* Sort Options */}
+        <div className="mb-6">
+          <SortOptions />
+        </div>
+
+        {/* Products Grid */}
+        <ProductGrid products={products} loading={loading} error={error} />
       </div>
     </div>
   );
-}
+};
 
 export default CollectionPage;

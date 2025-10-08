@@ -1,9 +1,13 @@
 import { IoMdClose } from "react-icons/io";
 import CartContents from "../Cart/CartContents";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function CartDrawer({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.auth);
+  const userId = user ? user._id : null;
   const handleChekout = () => {
     onClose();
     navigate("/chekout");

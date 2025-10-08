@@ -11,49 +11,44 @@ function Navbar() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
 
-  const toggleNavDrawer = () => {
-    setNavDrawerOpen(!navDrawerOpen);
-  };
-
-  const togglecartDrawer = () => {
-    setIsCartOpen((prev) => !prev);
-  };
+  const toggleNavDrawer = () => setNavDrawerOpen(!navDrawerOpen);
+  const toggleCartDrawer = () => setIsCartOpen((prev) => !prev);
 
   return (
     <>
       <nav className="container mx-auto flex items-center justify-between px-4 py-6">
-        {/* Left */}
+        {/* Logo */}
         <div>
           <Link to="/" className="text-2xl font-medium">
             <img className="h-6" src={logo} alt="Aura Logo" />
           </Link>
         </div>
 
-        {/* Center Navigation Links (Simple Links) */}
+        {/* Desktop Links */}
         <div className="hidden md:flex space-x-6">
           <Link
-            to="/collections/all"
+            to="/collections/all?gender=Men"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Men
           </Link>
           <Link
-            to="/collections/women"
+            to="/collections/all?gender=Women"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
             Women
           </Link>
           <Link
-            to="/collections/electronics"
+            to="/collections/all?category=Top Wear"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
-            Electronics
+            Top Wear
           </Link>
           <Link
-            to="/collections/jewellery"
+            to="/collections/all?category=Bottom Wear"
             className="text-gray-700 hover:text-black text-sm font-medium uppercase"
           >
-            Jewellery
+            Bottom Wear
           </Link>
         </div>
 
@@ -68,9 +63,8 @@ function Navbar() {
           <Link to="/profile" className="hover:text-black">
             <HiOutlineUser className="h-6 w-6 text-gray-700" />
           </Link>
-
           <button
-            onClick={togglecartDrawer}
+            onClick={toggleCartDrawer}
             className="relative hover:text-black"
           >
             <HiOutlineShoppingBag className="h-6 w-6 text-gray-700 cursor-pointer" />
@@ -78,9 +72,7 @@ function Navbar() {
               4
             </span>
           </button>
-
           <SearchBar />
-
           <button onClick={toggleNavDrawer} className="md:hidden">
             <HiBars3BottomRight className="h-6 w-6 text-gray-700" />
           </button>
@@ -88,7 +80,7 @@ function Navbar() {
       </nav>
 
       {/* Cart Drawer */}
-      <CartDrawer isOpen={isCartOpen} onClose={togglecartDrawer} />
+      <CartDrawer isOpen={isCartOpen} onClose={toggleCartDrawer} />
 
       {/* Mobile Navigation */}
       <div
@@ -105,32 +97,32 @@ function Navbar() {
           <h2 className="text-xl font-semibold mb-4">Menu</h2>
           <nav className="space-y-4">
             <Link
-              to="/collections/men"
+              to="/collections/all?gender=Men"
               onClick={toggleNavDrawer}
               className="block text-gray-800 font-medium"
             >
               Men
             </Link>
             <Link
-              to="/collections/women"
+              to="/collections/all?gender=Women"
               onClick={toggleNavDrawer}
               className="block text-gray-800 font-medium"
             >
               Women
             </Link>
             <Link
-              to="/collections/electronics"
+              to="/collections/all?category=Top Wear"
               onClick={toggleNavDrawer}
               className="block text-gray-800 font-medium"
             >
-              Electronics
+              Top Wear
             </Link>
             <Link
-              to="/collections/jewellery"
+              to="/collections/all?category=Bottom Wear"
               onClick={toggleNavDrawer}
               className="block text-gray-800 font-medium"
             >
-              Jewellery
+              Bottom Wear
             </Link>
           </nav>
         </div>
