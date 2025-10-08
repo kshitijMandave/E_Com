@@ -1,43 +1,38 @@
 import { RiDeleteBin3Line } from "react-icons/ri";
 import { useDispatch } from "react-redux";
-import { addToCart, removeFromCart } from "../../redux/slices/cartSlice";
+import {
+  updateCartItemQuantity,
+  removeFromCart,
+} from "../../redux/slices/cartSlice";
 
 function CartContents({ cart, userId, guestId }) {
   const dispatch = useDispatch();
 
-  const handleQuantityChange = (product, delta) => {
-    const newQuantity = product.quantity + delta;
+  const handleQuantityChange = (productId, delta, quantity, size, color) => {
+    const newQuantity = quantity + delta;
     if (newQuantity >= 1) {
       dispatch(
-        addToCart({
-          productId: product._id, // use correct id
+        updateCartItemQuantity({
+          productId,
           quantity: newQuantity,
-          size: product.size,
-          color: product.color,
           userId,
           guestId,
+          size,
+          color,
         })
       );
     }
   };
 
-  const handleRemove = (product) => {
-    dispatch(
-      removeFromCart({
-        productId: product._id, // correct id
-        size: product.size,
-        color: product.color,
-        userId,
-        guestId,
-      })
-    );
+  const handleRemove = (productId, size, color) => {
+    dispatch(removeFromCart({ productId, userId, guestId, size, color }));
   };
 
   return (
     <div>
-      {cart.products.map((product, idx) => (
+      {cart?.products?.map((product, index) => (
         <div
-          key={idx}
+          key={index}
           className="flex items-start justify-between py-4 border-b"
         >
           <div className="flex items-start">
@@ -47,24 +42,36 @@ function CartContents({ cart, userId, guestId }) {
               className="w-20 h-24 object-cover mr-4"
             />
             <div>
-              <h3 className="font-medium">{product.name}</h3>
+              <h3>{product.name}</h3>
               <p className="text-sm text-gray-500">
                 size: {product.size} | color: {product.color}
               </p>
               <div className="flex items-center mt-2">
-                {/* Decrease */}
                 <button
-                  onClick={() => handleQuantityChange(product, -1)}
+                  onClick={() =>
+                    handleQuantityChange(
+                      product.productId,
+                      -1,
+                      product.quantity,
+                      product.size,
+                      product.color
+                    )
+                  }
                   className="border rounded px-2 py-1 text-xl font-medium"
                 >
                   -
                 </button>
-
                 <span className="mx-4">{product.quantity}</span>
-
-                {/* Increase */}
                 <button
-                  onClick={() => handleQuantityChange(product, 1)}
+                  onClick={() =>
+                    handleQuantityChange(
+                      product.productId,
+                      1,
+                      product.quantity,
+                      product.size,
+                      product.color
+                    )
+                  }
                   className="border rounded px-2 py-1 text-xl font-medium"
                 >
                   +
@@ -72,11 +79,13 @@ function CartContents({ cart, userId, guestId }) {
               </div>
             </div>
           </div>
-
-          {/* Remove */}
-          <div>
-            <p>${product.price.toLocaleString()}</p>
-            <button onClick={() => handleRemove(product)}>
+          <div className="flex flex-col items-end">
+            <p>${(product.price * product.quantity).toLocaleString()}</p>
+            <button
+              onClick={() =>
+                handleRemove(product.productId, product.size, product.color)
+              }
+            >
               <RiDeleteBin3Line className="h-6 w-6 mt-2 text-red-600" />
             </button>
           </div>
